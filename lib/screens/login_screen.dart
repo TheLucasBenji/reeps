@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Center(
                         child: SvgPicture.asset(
-                          'assets/images/logo.svg',
+                          'assets/logo.svg',
                           width: 50,
                           height: 50,
                           colorFilter: const ColorFilter.mode(
