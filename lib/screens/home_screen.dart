@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../config/theme.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,10 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
             },
           ),
         ],
@@ -25,7 +30,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             // Saludo
             Text(
-              'Hola, Lucas',
+              'Hola, Luks',
               style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(height: 8),
@@ -105,13 +110,13 @@ class HomeScreen extends StatelessWidget {
                                 reservedSize: 30,
                                 getTitlesWidget: (value, meta) {
                                   const days = [
-                                    'Lu',
-                                    'Ma',
-                                    'Mi',
-                                    'Ju',
-                                    'Vi',
-                                    'Sa',
-                                    'Do',
+                                    'L',
+                                    'M',
+                                    'X',
+                                    'J',
+                                    'V',
+                                    'S',
+                                    'D',
                                   ];
                                   if (value.toInt() >= 0 &&
                                       value.toInt() < days.length) {
