@@ -17,6 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const StatisticsScreen(),
+    const ExercisesScreen(),
   ];
 
   void _onTabTapped(int index) {
