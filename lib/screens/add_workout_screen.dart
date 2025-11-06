@@ -488,9 +488,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      formattedDate,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                    Expanded(
+                      child: Text(
+                        formattedDate,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      ),
                     ),
                   ],
                 ),
