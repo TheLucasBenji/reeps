@@ -27,17 +27,21 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   @override
   void initState() {
     super.initState();
+    // Valores por defecto
     _setsController.text = '3';
     _repsController.text = '10';
 
+    // Inicializar lista filtrada
     _filteredExercises = ExerciseData.getAllExercises();
 
+    // Inicializar controlador de búsqueda
     _searchController = TextEditingController();
     _searchController.addListener(() {
       _filterExercises();
-      setState(() {});
+      setState(() {}); // Para actualizar el ícono de clear
     });
 
+    // Listeners para actualizar el resumen en tiempo real
     _weightController.addListener(() => setState(() {}));
     _repsController.addListener(() => setState(() {}));
     _setsController.addListener(() => setState(() {}));
@@ -113,6 +117,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
       return;
     }
 
+    // TODO: Guardar en Firebase
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('¡Registro guardado exitosamente!')),
     );
@@ -122,6 +127,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Fecha formateada con la hora actual del dispositivo (locale español)
     final String formattedDate = DateFormat(
       "d 'de' MMMM 'de' y, h:mm a",
       'es_ES',
@@ -142,6 +148,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Ejercicio
               Text('Ejercicio', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               _showExerciseDropdown
@@ -194,6 +201,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                         ),
                       ),
                     ),
+
+              // Dropdown desplegable con lista de ejercicios
               if (_showExerciseDropdown)
                 Container(
                   margin: const EdgeInsets.only(top: 8),
@@ -234,7 +243,10 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           },
                         ),
                 ),
+
               const SizedBox(height: 32),
+
+              // Peso
               Text('Peso', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               Row(
@@ -308,7 +320,10 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 32),
+
+              // Repeticiones
               Text(
                 'Repeticiones',
                 style: Theme.of(context).textTheme.titleLarge,
@@ -316,6 +331,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
+                  // Botón decrementar
                   Container(
                     width: 56,
                     height: 56,
@@ -341,6 +357,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Campo de texto
                   Expanded(
                     child: TextField(
                       controller: _repsController,
@@ -353,6 +370,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Botón incrementar
                   Container(
                     width: 56,
                     height: 56,
@@ -376,11 +394,15 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 32),
+
+              // Sets
               Text('Sets', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               Row(
                 children: [
+                  // Botón decrementar
                   Container(
                     width: 56,
                     height: 56,
@@ -406,6 +428,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Campo de texto
                   Expanded(
                     child: TextField(
                       controller: _setsController,
@@ -418,6 +441,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  // Botón incrementar
                   Container(
                     width: 56,
                     height: 56,
@@ -441,10 +465,14 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 32),
+
+              // Resumen del volumen total
               _buildVolumeSummary(),
               const SizedBox(height: 32),
 
+              // Fecha (automática)
               // --- INICIO CORRECCIÓN ---
               Container(
                 padding: const EdgeInsets.all(16),
@@ -474,6 +502,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
 
               // --- FIN CORRECCIÓN ---
               const SizedBox(height: 48),
+
+              // Botón Guardar
               SizedBox(
                 width: double.infinity,
                 height: 56,
