@@ -19,6 +19,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   final TextEditingController _setsController = TextEditingController(
     text: '3',
   );
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isSaving = false;
   String _selectedUnit = 'kg';
   late TextEditingController _searchController;
   bool _showExerciseDropdown = false;
@@ -96,33 +98,17 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
       return;
     }
 
-    if (_weightController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa el peso')),
-      );
-      return;
-    }
+    if (_formKey.currentState?.validate() != true) return;
 
-    if (_repsController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa las repeticiones')),
-      );
-      return;
-    }
-
-    if (_setsController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa los sets')),
-      );
-      return;
-    }
-
+    setState(() => _isSaving = true);
     // TODO: Guardar en Firebase
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('¡Registro guardado exitosamente!')),
-    );
-
-    Navigator.pop(context);
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('¡Registro guardado exitosamente!')),
+      );
+      Navigator.pop(context);
+    });
   }
 
   @override
@@ -246,224 +232,271 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
 
               const SizedBox(height: 32),
 
-              // Peso
-              Text('Peso', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextField(
-                      controller: _weightController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      decoration: const InputDecoration(
-                        hintText: 'Ingresa el peso',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 1,
-                    child: Row(
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Peso
+                    Text('Peso', style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 12),
+                    Row(
                       children: [
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedUnit = 'lb'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: _selectedUnit == 'lb'
-                                    ? AppTheme.primaryPurple
-                                    : AppTheme.cardBackground,
-                                borderRadius: const BorderRadius.horizontal(
-                                  left: Radius.circular(12),
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'lb',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ),
+                          flex: 3,
+                          child: TextFormField(
+                            controller: _weightController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
                             ),
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) =>
+                                FocusScope.of(context).unfocus(),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            decoration: const InputDecoration(
+                              hintText: 'Ingresa el peso',
+                            ),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty)
+                                return 'Ingresa el peso';
+                              final w = double.tryParse(v.replaceAll(',', '.'));
+                              if (w == null || w <= 0) return 'Peso inválido';
+                              return null;
+                            },
                           ),
                         ),
+                        const SizedBox(width: 12),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedUnit = 'kg'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: _selectedUnit == 'kg'
-                                    ? AppTheme.primaryPurple
-                                    : AppTheme.cardBackground,
-                                borderRadius: const BorderRadius.horizontal(
-                                  right: Radius.circular(12),
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      setState(() => _selectedUnit = 'lb'),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _selectedUnit == 'lb'
+                                          ? AppTheme.primaryPurple
+                                          : AppTheme.cardBackground,
+                                      borderRadius:
+                                          const BorderRadius.horizontal(
+                                            left: Radius.circular(12),
+                                          ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'lb',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Center(
-                                child: Text(
-                                  'kg',
-                                  style: Theme.of(context).textTheme.bodyLarge,
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      setState(() => _selectedUnit = 'kg'),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _selectedUnit == 'kg'
+                                          ? AppTheme.primaryPurple
+                                          : AppTheme.cardBackground,
+                                      borderRadius:
+                                          const BorderRadius.horizontal(
+                                            right: Radius.circular(12),
+                                          ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'kg',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
-              // Repeticiones
-              Text(
-                'Repeticiones',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  // Botón decrementar
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardBackground,
-                      borderRadius: BorderRadius.circular(12),
+                    // Repeticiones
+                    Text(
+                      'Repeticiones',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.remove,
-                        color: AppTheme.primaryPurple,
-                      ),
-                      onPressed: () {
-                        int currentValue =
-                            int.tryParse(_repsController.text) ?? 1;
-                        if (currentValue > 1) {
-                          setState(() {
-                            _repsController.text = (currentValue - 1)
-                                .toString();
-                          });
-                        }
-                      },
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        // Botón decrementar
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.remove,
+                              color: AppTheme.primaryPurple,
+                            ),
+                            onPressed: () {
+                              int currentValue =
+                                  int.tryParse(_repsController.text) ?? 1;
+                              if (currentValue > 1) {
+                                setState(() {
+                                  _repsController.text = (currentValue - 1)
+                                      .toString();
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Campo de texto
+                        Expanded(
+                          child: TextFormField(
+                            controller: _repsController,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) =>
+                                FocusScope.of(context).unfocus(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall,
+                            decoration: const InputDecoration(hintText: '10'),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty)
+                                return 'Ingresa repeticiones';
+                              final n = int.tryParse(v);
+                              if (n == null || n < 1)
+                                return 'Repeticiones inválidas';
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Botón incrementar
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.add,
+                              color: AppTheme.primaryPurple,
+                            ),
+                            onPressed: () {
+                              int currentValue =
+                                  int.tryParse(_repsController.text) ?? 1;
+                              setState(() {
+                                _repsController.text = (currentValue + 1)
+                                    .toString();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Campo de texto
-                  Expanded(
-                    child: TextField(
-                      controller: _repsController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displaySmall,
-                      decoration: const InputDecoration(hintText: '10'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Botón incrementar
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardBackground,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add,
-                        color: AppTheme.primaryPurple,
-                      ),
-                      onPressed: () {
-                        int currentValue =
-                            int.tryParse(_repsController.text) ?? 1;
-                        setState(() {
-                          _repsController.text = (currentValue + 1).toString();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
-              // Sets
-              Text('Sets', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  // Botón decrementar
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardBackground,
-                      borderRadius: BorderRadius.circular(12),
+                    // Sets
+                    Text('Sets', style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        // Botón decrementar
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.remove,
+                              color: AppTheme.primaryPurple,
+                            ),
+                            onPressed: () {
+                              int currentValue =
+                                  int.tryParse(_setsController.text) ?? 1;
+                              if (currentValue > 1) {
+                                setState(() {
+                                  _setsController.text = (currentValue - 1)
+                                      .toString();
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Campo de texto
+                        Expanded(
+                          child: TextFormField(
+                            controller: _setsController,
+                            keyboardType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) =>
+                                FocusScope.of(context).unfocus(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall,
+                            decoration: const InputDecoration(hintText: '3'),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty)
+                                return 'Ingresa sets';
+                              final n = int.tryParse(v);
+                              if (n == null || n < 1) return 'Sets inválidos';
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // Botón incrementar
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardBackground,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.add,
+                              color: AppTheme.primaryPurple,
+                            ),
+                            onPressed: () {
+                              int currentValue =
+                                  int.tryParse(_setsController.text) ?? 1;
+                              setState(() {
+                                _setsController.text = (currentValue + 1)
+                                    .toString();
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.remove,
-                        color: AppTheme.primaryPurple,
-                      ),
-                      onPressed: () {
-                        int currentValue =
-                            int.tryParse(_setsController.text) ?? 1;
-                        if (currentValue > 1) {
-                          setState(() {
-                            _setsController.text = (currentValue - 1)
-                                .toString();
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Campo de texto
-                  Expanded(
-                    child: TextField(
-                      controller: _setsController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displaySmall,
-                      decoration: const InputDecoration(hintText: '3'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Botón incrementar
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppTheme.cardBackground,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add,
-                        color: AppTheme.primaryPurple,
-                      ),
-                      onPressed: () {
-                        int currentValue =
-                            int.tryParse(_setsController.text) ?? 1;
-                        setState(() {
-                          _setsController.text = (currentValue + 1).toString();
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               const SizedBox(height: 32),
@@ -503,8 +536,14 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _saveWorkout,
-                  child: const Text('Guardar'),
+                  onPressed: _isSaving ? null : _saveWorkout,
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Guardar'),
                 ),
               ),
             ],
