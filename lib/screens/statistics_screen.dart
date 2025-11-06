@@ -20,7 +20,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Selector de período
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -33,23 +32,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      _PeriodChip(
-                        label: 'Semana',
-                        isSelected: _selectedPeriod == 'Semana',
-                        onTap: () => setState(() => _selectedPeriod = 'Semana'),
+                      Expanded(
+                        child: _PeriodChip(
+                          label: 'Semana',
+                          isSelected: _selectedPeriod == 'Semana',
+                          onTap: () =>
+                              setState(() => _selectedPeriod = 'Semana'),
+                          fillWidth: true,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      _PeriodChip(
-                        label: 'Mes',
-                        isSelected: _selectedPeriod == 'Mes',
-                        onTap: () => setState(() => _selectedPeriod = 'Mes'),
+                      Expanded(
+                        child: _PeriodChip(
+                          label: 'Mes',
+                          isSelected: _selectedPeriod == 'Mes',
+                          onTap: () => setState(() => _selectedPeriod = 'Mes'),
+                          fillWidth: true,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      _PeriodChip(
-                        label: 'Historial completo',
-                        isSelected: _selectedPeriod == 'Historial completo',
-                        onTap: () => setState(
-                          () => _selectedPeriod = 'Historial completo',
+                      Expanded(
+                        child: _PeriodChip(
+                          label: 'Total',
+                          isSelected: _selectedPeriod == 'Total',
+                          onTap: () =>
+                              setState(() => _selectedPeriod = 'Total'),
+                          fillWidth: true,
                         ),
                       ),
                     ],
@@ -57,8 +65,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ],
               ),
             ),
-
-            // Evolución del peso
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Padding(
@@ -68,10 +74,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Evolución del peso',
-                          style: Theme.of(context).textTheme.titleLarge,
+                        Expanded(
+                          child: Text(
+                            'Evolución del peso',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -200,31 +209,31 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 24),
-
-            // Ejercicios
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Ejercicios',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       TextButton(
-                        onPressed: () {
-                          // TODO: Ordenar por fecha
-                        },
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
                         child: const Text('Ordenar por fecha'),
                       ),
                       TextButton(
-                        onPressed: () {
-                          // TODO: Mostrar todos los ejercicios
-                        },
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
                         child: const Text('Todos'),
                       ),
                     ],
@@ -232,10 +241,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ],
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Lista de ejercicios
             _buildExerciseRecord(
               context,
               icon: Icons.fitness_center,
@@ -254,7 +260,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               name: 'Peso muerto',
               details: '120kg × 5 reps × 3 sets',
             ),
-
             const SizedBox(height: 100),
           ],
         ),
@@ -307,11 +312,13 @@ class _PeriodChip extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool fillWidth;
 
   const _PeriodChip({
     required this.label,
     required this.isSelected,
     required this.onTap,
+    this.fillWidth = false,
   });
 
   @override
@@ -319,6 +326,7 @@ class _PeriodChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: fillWidth ? double.infinity : null,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryPurple : AppTheme.cardBackground,
@@ -326,10 +334,12 @@ class _PeriodChip extends StatelessWidget {
         ),
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isSelected ? AppTheme.textPrimary : AppTheme.textSecondary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

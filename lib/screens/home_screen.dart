@@ -56,10 +56,13 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start, //
                       children: [
-                        Text(
-                          '150 kg movidos esta\nsemana!',
-                          style: Theme.of(context).textTheme.displaySmall,
+                        Expanded(
+                          child: Text(
+                            '150 kg movidos esta\nsemana!',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
