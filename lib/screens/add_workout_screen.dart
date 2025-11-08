@@ -4,6 +4,7 @@ import '../data/exercise_data.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
 import '../utils/search_utils.dart';
+import '../utils/icon_utils.dart';
 import '../widgets/custom_button.dart';
 
 class AddWorkoutScreen extends StatefulWidget {
@@ -220,6 +221,23 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           itemBuilder: (context, index) {
                             final exercise = _filteredExercises[index];
                             return ListTile(
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryPurple.withAlpha(
+                                    (0.2 * 255).round(),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  IconUtils.getMuscleGroupIcon(
+                                    exercise.muscleGroup,
+                                  ),
+                                  color: AppTheme.primaryPurple,
+                                  size: 20,
+                                ),
+                              ),
                               title: Text(exercise.name),
                               subtitle: Text(exercise.muscleGroup),
                               onTap: () => _selectExercise(exercise),

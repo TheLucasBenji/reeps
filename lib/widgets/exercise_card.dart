@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
+import '../utils/icon_utils.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
@@ -31,8 +32,8 @@ class ExerciseCard extends StatelessWidget {
                 color: AppTheme.primaryPurple.withAlpha((0.2 * 255).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
-                Icons.fitness_center,
+              child: Icon(
+                IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
                 color: AppTheme.primaryPurple,
               ),
             ),

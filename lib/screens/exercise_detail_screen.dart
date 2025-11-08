@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
+import '../utils/icon_utils.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
   final Exercise exercise;
@@ -38,8 +39,8 @@ class ExerciseDetailScreen extends StatelessWidget {
                       color: AppTheme.primaryPurple.withOpacity(0.3),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.fitness_center,
+                    child: Icon(
+                      IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
                       color: AppTheme.primaryPurple,
                       size: 40,
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../config/theme.dart';
+import '../utils/icon_utils.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -248,19 +249,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             // Lista de ejercicios
             _buildExerciseRecord(
               context,
-              icon: Icons.fitness_center,
+              icon: IconUtils.getIconForExercise('Sentadilla'),
               name: 'Sentadilla',
               details: '100kg × 5 reps × 3 sets',
             ),
             _buildExerciseRecord(
               context,
-              icon: Icons.fitness_center,
+              icon: IconUtils.getIconForExercise('Press de banca'),
               name: 'Press de banca',
               details: '60kg × 8 reps × 4 sets',
             ),
             _buildExerciseRecord(
               context,
-              icon: Icons.fitness_center,
+              icon: IconUtils.getIconForExercise('Peso muerto'),
               name: 'Peso muerto',
               details: '120kg × 5 reps × 3 sets',
             ),
