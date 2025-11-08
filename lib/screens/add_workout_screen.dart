@@ -115,7 +115,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   Widget build(BuildContext context) {
     // Fecha formateada con la hora actual del dispositivo (locale español)
     final String formattedDate = DateFormat(
-      "d 'de' MMMM 'de' y, h:mm a",
+      "dd/MM/y, h:mm a",
       'es_ES',
     ).format(DateTime.now());
     return Scaffold(
@@ -348,7 +348,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: AppTheme.cardBackground,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
                             icon: const Icon(
@@ -396,7 +396,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: AppTheme.cardBackground,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
                             icon: const Icon(
@@ -429,7 +429,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: AppTheme.cardBackground,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
                             icon: const Icon(
@@ -476,7 +476,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: AppTheme.cardBackground,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
                             icon: const Icon(
