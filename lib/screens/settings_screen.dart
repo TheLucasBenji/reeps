@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
-import 'login_screen.dart';
-import 'edit_profile_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -20,11 +18,9 @@ class SettingsScreen extends StatelessWidget {
             title: 'Editar perfil',
             onTap: () async {
               final messenger = ScaffoldMessenger.of(context);
-              final result = await Navigator.push(
+              final result = await Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const EditProfileScreen(),
-                ),
+                '/edit_profile',
               );
 
               if (result != null) {
@@ -98,11 +94,9 @@ class SettingsScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.pushNamedAndRemoveUntil(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
+                          '/login',
                           (route) => false,
                         );
                       },

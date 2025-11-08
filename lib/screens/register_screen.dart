@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
-import 'main_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -37,19 +36,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Simulación rápida de proceso (a reemplazar por lógica real)
     Future.delayed(const Duration(milliseconds: 400), () {
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
+      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
     });
   }
 
   void _registerWithGoogle() {
     // TODO: Implementar registro con Google
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainScreen()),
-    );
+    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
   }
 
   @override

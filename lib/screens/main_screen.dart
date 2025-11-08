@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/exercises_screen.dart';
 import '../screens/statistics_screen.dart';
-import '../screens/add_workout_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -27,10 +26,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showAddWorkoutScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AddWorkoutScreen()),
-    );
+    Navigator.pushNamed(context, '/add_workout');
   }
 
   @override

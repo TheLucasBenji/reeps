@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
-import '../screens/exercise_detail_screen.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
@@ -53,12 +52,10 @@ class ExerciseCard extends StatelessWidget {
         onTap:
             onTap ??
             () {
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ExerciseDetailScreen(exercise: exercise),
-                ),
+                '/exercise_detail',
+                arguments: exercise,
               );
             },
       ),

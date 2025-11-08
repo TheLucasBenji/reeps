@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../config/theme.dart';
-import 'register_screen.dart';
-import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,19 +30,13 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: Implementar autenticación con Firebase
     Future.delayed(const Duration(milliseconds: 400), () {
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
+      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
     });
   }
 
   void _loginWithGoogle() {
     // TODO: Implementar inicio de sesión con Google
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const MainScreen()),
-    );
+    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
   }
 
   @override
@@ -252,12 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, '/register');
                       },
                       child: const Text('Regístrate'),
                     ),
