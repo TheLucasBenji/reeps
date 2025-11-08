@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Colores principales
@@ -24,14 +25,14 @@ class AppTheme {
       ),
 
       // AppBar
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: darkBackground,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.oswald(
           color: textPrimary,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
         ),
         iconTheme: IconThemeData(color: textPrimary),
       ),
@@ -53,50 +54,51 @@ class AppTheme {
       ),
 
       // Bottom Navigation Bar
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: cardBackground,
         selectedItemColor: primaryPurple,
         unselectedItemColor: textSecondary,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
+        selectedLabelStyle: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
       ),
 
       // Text Theme
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.bebasNeue(
           color: textPrimary,
           fontSize: 32,
           fontWeight: FontWeight.bold,
+          letterSpacing: 2.5, 
         ),
-        displayMedium: TextStyle(
+        displayMedium: GoogleFonts.teko(
           color: textPrimary,
           fontSize: 28,
           fontWeight: FontWeight.bold,
         ),
-        displaySmall: TextStyle(
+        displaySmall: GoogleFonts.roboto(
           color: textPrimary,
           fontSize: 24,
           fontWeight: FontWeight.w600,
         ),
-        headlineMedium: TextStyle(
+        headlineMedium: GoogleFonts.montserrat(
           color: textPrimary,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
-        titleLarge: TextStyle(
+        titleLarge: GoogleFonts.montserrat(
           color: textPrimary,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
-        titleMedium: TextStyle(
+        titleMedium: GoogleFonts.montserrat(
           color: textPrimary,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
-        bodyLarge: TextStyle(color: textPrimary, fontSize: 16),
-        bodyMedium: TextStyle(color: textSecondary, fontSize: 14),
-        labelLarge: TextStyle(
+        bodyLarge: GoogleFonts.montserrat(color: textPrimary, fontSize: 16),
+        bodyMedium: GoogleFonts.montserrat(color: textSecondary, fontSize: 14),
+        labelLarge: GoogleFonts.montserrat(
           color: textPrimary,
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -136,7 +138,10 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
 
@@ -144,7 +149,10 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: primaryPurple,
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
 
