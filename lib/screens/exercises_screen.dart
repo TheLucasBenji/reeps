@@ -3,7 +3,7 @@ import '../data/exercise_data.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
 import '../utils/search_utils.dart';
-import 'exercise_detail_screen.dart';
+import '../widgets/exercise_card.dart';
 
 class ExercisesScreen extends StatefulWidget {
   const ExercisesScreen({super.key});
@@ -102,7 +102,7 @@ class _ExercisesScreenState extends State<ExercisesScreen>
       itemCount: exercises.length,
       itemBuilder: (context, index) {
         final exercise = exercises[index];
-        return _ExerciseCard(exercise: exercise);
+        return ExerciseCard(exercise: exercise);
       },
     );
   }
@@ -132,61 +132,12 @@ class _ExercisesScreenState extends State<ExercisesScreen>
             ...exercises.map(
               (exercise) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _ExerciseCard(exercise: exercise),
+                child: ExerciseCard(exercise: exercise),
               ),
             ),
           ],
         );
       },
-    );
-  }
-}
-
-class _ExerciseCard extends StatelessWidget {
-  final Exercise exercise;
-
-  const _ExerciseCard({required this.exercise});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryPurple.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.fitness_center,
-            color: AppTheme.primaryPurple,
-          ),
-        ),
-        title: Text(
-          exercise.name,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        subtitle: Text(
-          exercise.muscleGroup,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: AppTheme.textSecondary,
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExerciseDetailScreen(exercise: exercise),
-            ),
-          );
-        },
-      ),
     );
   }
 }
@@ -254,7 +205,7 @@ class ExerciseSearchDelegate extends SearchDelegate<Exercise?> {
         padding: const EdgeInsets.all(16),
         itemCount: exercises.length,
         itemBuilder: (context, index) {
-          return _ExerciseCard(exercise: exercises[index]);
+          return ExerciseCard(exercise: exercises[index]);
         },
       ),
     );
