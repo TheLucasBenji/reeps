@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../config/theme.dart';
+import '../widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -174,19 +175,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 24),
 
                 // Login Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isLoggingIn ? null : _login,
-                    child: _isLoggingIn
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Iniciar Sesión'),
-                  ),
+                CustomButton(
+                  text: 'Iniciar Sesión',
+                  onPressed: _login,
+                  isLoading: _isLoggingIn,
                 ),
 
                 const SizedBox(height: 24),

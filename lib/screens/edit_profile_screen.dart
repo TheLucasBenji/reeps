@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
+import '../widgets/custom_button.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -227,13 +228,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        ElevatedButton(
-                          onPressed: _save,
-                          child: const SizedBox(
-                            width: double.infinity,
-                            child: Center(child: Text('Guardar')),
-                          ),
-                        ),
+                        CustomButton(text: 'Guardar', onPressed: _save),
                       ],
                     ),
                   ),

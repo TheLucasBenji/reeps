@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
+import '../widgets/custom_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -191,21 +192,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 32),
 
                       // Register Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: _isRegistering ? null : _register,
-                          child: _isRegistering
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text('Crear Cuenta'),
-                        ),
+                      CustomButton(
+                        text: 'Crear Cuenta',
+                        onPressed: _register,
+                        isLoading: _isRegistering,
                       ),
                     ],
                   ),

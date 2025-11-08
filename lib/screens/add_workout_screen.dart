@@ -4,6 +4,7 @@ import '../data/exercise_data.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
 import '../utils/search_utils.dart';
+import '../widgets/custom_button.dart';
 
 class AddWorkoutScreen extends StatefulWidget {
   const AddWorkoutScreen({super.key});
@@ -536,19 +537,10 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               const SizedBox(height: 48),
 
               // Botón Guardar
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isSaving ? null : _saveWorkout,
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Guardar'),
-                ),
+              CustomButton(
+                text: 'Guardar',
+                onPressed: _saveWorkout,
+                isLoading: _isSaving,
               ),
             ],
           ),
