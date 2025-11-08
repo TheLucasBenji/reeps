@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import 'login_screen.dart';
+import 'edit_profile_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -17,16 +18,20 @@ class SettingsScreen extends StatelessWidget {
           _SettingTile(
             icon: Icons.person_outline,
             title: 'Editar perfil',
-            onTap: () {
-              // TODO: Navegacion a pantalla de editar perfil
-            },
-          ),
-          _SettingTile(
-            icon: Icons.fitness_center_outlined,
-            title: 'Unidad de peso',
-            subtitle: 'Kilogramos (kg)',
-            onTap: () {
-              // TODO: Mostrar selector de unidad
+            onTap: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EditProfileScreen(),
+                ),
+              );
+
+              if (result != null) {
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Perfil actualizado')),
+                );
+              }
             },
           ),
 
@@ -61,12 +66,6 @@ class SettingsScreen extends StatelessWidget {
 
           // Acerca de
           _SectionHeader(title: 'Acerca de'),
-          _SettingTile(
-            icon: Icons.info_outline,
-            title: 'Versión',
-            subtitle: '1.0.0',
-            onTap: () {},
-          ),
           _SettingTile(
             icon: Icons.privacy_tip_outlined,
             title: 'Política de privacidad',
