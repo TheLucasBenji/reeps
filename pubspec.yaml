@@ -55,7 +55,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.3.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -111,5 +112,21 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/logo_reeps.png"
+  image_path: 'assets/logo_reeps.png'
 # flutter pub run flutter_launcher_icons:main
+
+flutter_native_splash:
+  # fondo principal de la pantalla de carga (usa formato HEX)
+  color: '#121212'
+  # imagen centrada (usa el asset existente)
+  image: assets/logo_reeps_big.png
+  # generar para plataformas móviles
+  android: true
+  ios: true
+  # no forzar pantalla completa por defecto (mantener status bar)
+  fullscreen: false
+  # no generar assets web
+  web: false
+  # color oscuro opcional (si el dispositivo está en modo oscuro)
+  color_dark: '#121212'
+  # flutter pub run flutter_native_splash:create

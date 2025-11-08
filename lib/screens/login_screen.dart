@@ -72,8 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Center(
                         child: SvgPicture.asset(
                           'assets/logo_reeps.svg',
-                          width: 50,
-                          height: 50,
+                          width: 70,
+                          height: 70,
                           colorFilter: const ColorFilter.mode(
                             Colors.white,
                             BlendMode.srcIn,
