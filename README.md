@@ -72,6 +72,32 @@ Para compilar iOS (desde macOS con Xcode configurado):
 flutter build ios --release
 ```
 
+## Cómo usar la app
+
+(Dada la naturaleza de la evaluacion, todos los datos son estáticos y no hay checkeo de cuentas validas para el inicio de sesión)
+
+Una vez que la app esté ejecutándose, sigue estos pasos para comenzar a registrar tus entrenamientos:
+
+1. **Autenticación**: Al abrir la app, inicia sesión con tu cuenta de email/password o Google Sign-In. Si no tienes cuenta, regístrate primero. 
+
+2. **Pantalla principal (Home)**: Verás un resumen de tus entrenamientos recientes, estadísticas y gráficos de progreso.
+
+3. **Agregar un entrenamiento**:
+
+   - Toca el botón "+" o "Agregar Entrenamiento".
+   - Selecciona un ejercicio de la biblioteca (o busca uno nuevo).
+   - Ingresa los detalles: series (sets), repeticiones (reps), peso y unidad (kg o lbs).
+   - El volumen se calcula automáticamente (sets × reps × peso).
+   - Guarda el registro.
+
+4. **Biblioteca de ejercicios**: Navega a la sección de ejercicios para ver todos los disponibles. Puedes buscar por nombre.
+
+5. **Historial y detalles**: Toca en un ejercicio para ver su historial completo con gráficos de progreso.
+
+6. **Estadísticas**: Accede a la pantalla de estadísticas para ver gráficos generales de tu progreso en el gimnasio.
+
+7. **Configuración**: Puedes cambiar datos de tu perfil, cambiar el tema de la app y cerrar sesión.
+
 ### Estructura relevante del proyecto
 
 - `lib/` – Código fuente principal.
@@ -80,12 +106,18 @@ flutter build ios --release
 - `lib/config/theme.dart` – Tema centralizado de la app.
 - `assets/` – Imágenes y recursos.
 
-
 ### Dependencias Clave
-* **l_chart:** Para los gráficos de progreso en HomeScreen y StatisticsScreen.
 
-* **intl:** Para formateo de fechas (visto en main.dart y add_workout_screen.dart).
+- **fl_chart:** Para los gráficos de progreso en HomeScreen y StatisticsScreen.
 
-* **provider:** Paquete de gestión de estado (disponible para uso futuro).
+- **intl:** Para formateo de fechas (visto en main.dart y add_workout_screen.dart).
 
-* **flutter_svg:** Para renderizar el logo en la pantalla de login.
+- **provider:** Paquete de gestión de estado (disponible para uso futuro).
+
+- **flutter_svg:** Para renderizar el logo en la pantalla de login.
+
+- **shared_preferences:** Para persistencia local de datos.
+
+- **font_awesome_flutter:** Para íconos adicionales.
+
+- **google_fonts:** Para fuentes personalizadas.
