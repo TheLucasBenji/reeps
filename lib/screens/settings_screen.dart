@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import 'package:provider/provider.dart';
 import '../config/theme_provider.dart';
+import '../widgets/confirmation_dialog.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -142,31 +143,17 @@ class SettingsScreen extends StatelessWidget {
             onTap: () {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Cerrar sesión'),
-                  content: const Text(
-                    '¿Estás seguro que deseas cerrar sesión?',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancelar'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (route) => false,
-                        );
-                      },
-                      child: const Text(
-                        'Cerrar sesión',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
+                builder: (context) => ConfirmationDialog(
+                  title: 'Cerrar sesión',
+                  content: '¿Estás seguro que deseas cerrar sesión?',
+                  confirmText: 'Cerrar sesión',
+                  onConfirm: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/login',
+                      (route) => false,
+                    );
+                  },
                 ),
               );
             },
