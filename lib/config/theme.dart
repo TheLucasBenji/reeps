@@ -165,7 +165,6 @@ class AppTheme {
   }
 
   static ThemeData get lightTheme {
-    // Light variant keeping brand colors
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -308,7 +307,7 @@ class AppTheme {
     );
   }
 
-  // Helpers that return colors based on current Theme (light / dark)
+
   static Color primaryColor(BuildContext context) =>
       Theme.of(context).colorScheme.primary;
 

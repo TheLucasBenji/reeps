@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../config/theme.dart';
 import '../widgets/custom_button.dart';
 
@@ -214,14 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: Image.asset(
-                      'assets/google_logo.png',
-                      width: 24,
-                      height: 24,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.g_mobiledata, size: 32);
-                      },
-                    ),
+                    icon: const Icon(FontAwesomeIcons.google, size: 24),
                     label: const Text('Continuar con Google'),
                   ),
                 ),
