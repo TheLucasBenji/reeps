@@ -165,7 +165,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppTheme.cardBackground,
+                          color: AppTheme.surfaceColor(context),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -177,13 +177,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                               style: Theme.of(context).textTheme.bodyLarge
                                   ?.copyWith(
                                     color: _selectedExercise == null
-                                        ? AppTheme.textSecondary
-                                        : AppTheme.textPrimary,
+                                        ? AppTheme.textSecondaryColor(context)
+                                        : AppTheme.textPrimaryColor(context),
                                   ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_drop_down,
-                              color: AppTheme.textSecondary,
+                              color: AppTheme.textSecondaryColor(context),
                             ),
                           ],
                         ),
@@ -195,7 +195,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                 Container(
                   margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                    color: AppTheme.cardBackground,
+                    color: AppTheme.surfaceColor(context),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -213,7 +213,9 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           child: Text(
                             'No se encontraron ejercicios',
                             style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: AppTheme.textSecondary),
+                                ?.copyWith(
+                                  color: AppTheme.textSecondaryColor(context),
+                                ),
                           ),
                         )
                       : ListView.builder(
@@ -225,16 +227,16 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primaryPurple.withAlpha(
-                                    (0.2 * 255).round(),
-                                  ),
+                                  color: AppTheme.primaryColor(
+                                    context,
+                                  ).withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(
                                   IconUtils.getMuscleGroupIcon(
                                     exercise.muscleGroup,
                                   ),
-                                  color: AppTheme.primaryPurple,
+                                  color: AppTheme.primaryColor(context),
                                   size: 20,
                                 ),
                               ),
@@ -242,7 +244,9 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                               subtitle: Text(exercise.muscleGroup),
                               onTap: () => _selectExercise(exercise),
                               tileColor: _selectedExercise?.id == exercise.id
-                                  ? AppTheme.primaryPurple.withOpacity(0.1)
+                                  ? AppTheme.primaryColor(
+                                      context,
+                                    ).withOpacity(0.1)
                                   : null,
                             );
                           },
@@ -299,8 +303,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: _selectedUnit == 'lb'
-                                          ? AppTheme.primaryPurple
-                                          : AppTheme.cardBackground,
+                                          ? AppTheme.primaryColor(context)
+                                          : AppTheme.surfaceColor(context),
                                       borderRadius:
                                           const BorderRadius.horizontal(
                                             left: Radius.circular(12),
@@ -327,8 +331,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: _selectedUnit == 'kg'
-                                          ? AppTheme.primaryPurple
-                                          : AppTheme.cardBackground,
+                                          ? AppTheme.primaryColor(context)
+                                          : AppTheme.surfaceColor(context),
                                       borderRadius:
                                           const BorderRadius.horizontal(
                                             right: Radius.circular(12),
@@ -366,13 +370,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: AppTheme.cardBackground,
+                            color: AppTheme.surfaceColor(context),
                             borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.remove,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                             ),
                             onPressed: () {
                               int currentValue =
@@ -414,13 +418,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: AppTheme.cardBackground,
+                            color: AppTheme.surfaceColor(context),
                             borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.add,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                             ),
                             onPressed: () {
                               int currentValue =
@@ -447,13 +451,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: AppTheme.cardBackground,
+                            color: AppTheme.surfaceColor(context),
                             borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.remove,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                             ),
                             onPressed: () {
                               int currentValue =
@@ -494,13 +498,13 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: AppTheme.cardBackground,
+                            color: AppTheme.surfaceColor(context),
                             borderRadius: BorderRadius.circular(28),
                           ),
                           child: IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.add,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                             ),
                             onPressed: () {
                               int currentValue =
@@ -529,14 +533,14 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.cardBackground.withOpacity(0.5),
+                  color: AppTheme.surfaceColor(context).withOpacity(0.5),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.calendar_today,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.textSecondaryColor(context),
                       size: 20,
                     ),
                     const SizedBox(width: 12),
@@ -582,8 +586,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.primaryPurple.withOpacity(0.3),
-            AppTheme.accentPurple.withOpacity(0.1),
+            AppTheme.primaryColor(context).withOpacity(0.3),
+            AppTheme.accentColor(context).withOpacity(0.1),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -595,9 +599,9 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.fitness_center,
-                color: AppTheme.primaryPurple,
+                color: AppTheme.primaryColor(context),
                 size: 28,
               ),
               const SizedBox(width: 12),
@@ -611,7 +615,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
           Text(
             '${totalVolume.toStringAsFixed(1)} $_selectedUnit',
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              color: AppTheme.primaryPurple,
+              color: AppTheme.primaryColor(context),
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -91,14 +91,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.successGreen.withOpacity(0.2),
+                            color: AppTheme.successColor(
+                              context,
+                            ).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             '+10%',
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
-                                  color: AppTheme.successGreen,
+                                  color: AppTheme.successColor(context),
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -121,7 +123,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             horizontalInterval: 1,
                             getDrawingHorizontalLine: (value) {
                               return FlLine(
-                                color: AppTheme.textSecondary.withOpacity(0.1),
+                                color: AppTheme.textSecondaryColor(
+                                  context,
+                                ).withOpacity(0.1),
                                 strokeWidth: 1,
                               );
                             },
@@ -188,7 +192,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 FlSpot(10, 5.4),
                               ],
                               isCurved: true,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                               barWidth: 3,
                               isStrokeCapRound: true,
                               dotData: FlDotData(
@@ -196,9 +200,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 getDotPainter: (spot, percent, barData, index) {
                                   return FlDotCirclePainter(
                                     radius: 4,
-                                    color: AppTheme.primaryPurple,
+                                    color: AppTheme.primaryColor(context),
                                     strokeWidth: 2,
-                                    strokeColor: AppTheme.darkBackground,
+                                    strokeColor: Theme.of(
+                                      context,
+                                    ).scaffoldBackgroundColor,
                                   );
                                 },
                               ),
@@ -282,7 +288,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: AppTheme.surfaceColor(context),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -291,10 +297,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppTheme.primaryPurple.withOpacity(0.2),
+              color: AppTheme.primaryColor(context).withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: AppTheme.primaryPurple),
+            child: Icon(icon, color: AppTheme.primaryColor(context)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -334,14 +340,18 @@ class _PeriodChip extends StatelessWidget {
         width: fillWidth ? double.infinity : null,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryPurple : AppTheme.cardBackground,
+          color: isSelected
+              ? AppTheme.primaryColor(context)
+              : AppTheme.surfaceColor(context),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: isSelected ? AppTheme.textPrimary : AppTheme.textSecondary,
+            color: isSelected
+                ? AppTheme.textPrimaryColor(context)
+                : AppTheme.textSecondaryColor(context),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
           overflow: TextOverflow.ellipsis,

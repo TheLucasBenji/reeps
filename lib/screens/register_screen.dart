@@ -227,7 +227,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _registerWithGoogle,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppTheme.textSecondary),
+                      side: BorderSide(
+                        color: AppTheme.textSecondaryColor(context),
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

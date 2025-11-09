@@ -66,14 +66,16 @@ class HomeScreen extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.successGreen.withOpacity(0.2),
+                            color: AppTheme.successColor(
+                              context,
+                            ).withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             '+20%',
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
-                                  color: AppTheme.successGreen,
+                                  color: AppTheme.successColor(context),
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
@@ -147,13 +149,15 @@ class HomeScreen extends StatelessWidget {
                                 const FlSpot(6, 3.5),
                               ],
                               isCurved: true,
-                              color: AppTheme.primaryPurple,
+                              color: AppTheme.primaryColor(context),
                               barWidth: 3,
                               isStrokeCapRound: true,
                               dotData: const FlDotData(show: true),
                               belowBarData: BarAreaData(
                                 show: true,
-                                color: AppTheme.primaryPurple.withOpacity(0.2),
+                                color: AppTheme.primaryColor(
+                                  context,
+                                ).withOpacity(0.2),
                               ),
                             ),
                           ],
@@ -197,8 +201,8 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.primaryPurple.withOpacity(0.3),
-                    AppTheme.accentPurple.withOpacity(0.1),
+                    AppTheme.primaryColor(context).withOpacity(0.25),
+                    AppTheme.accentColor(context).withOpacity(0.08),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -208,9 +212,9 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.emoji_events,
-                    color: AppTheme.primaryPurple,
+                    color: AppTheme.primaryColor(context),
                     size: 32,
                   ),
                   const SizedBox(height: 12),
@@ -246,7 +250,7 @@ class _StatCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(icon, color: AppTheme.primaryPurple, size: 32),
+            Icon(icon, color: AppTheme.primaryColor(context), size: 32),
             const SizedBox(height: 12),
             Text(value, style: Theme.of(context).textTheme.displaySmall),
             const SizedBox(height: 4),

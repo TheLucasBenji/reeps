@@ -23,8 +23,8 @@ class ExerciseDetailScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.primaryPurple.withOpacity(0.3),
-                    AppTheme.accentPurple.withOpacity(0.1),
+                    AppTheme.primaryColor(context).withOpacity(0.3),
+                    AppTheme.accentColor(context).withOpacity(0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -36,12 +36,12 @@ class ExerciseDetailScreen extends StatelessWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryPurple.withOpacity(0.3),
+                      color: AppTheme.primaryColor(context).withOpacity(0.3),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
-                      color: AppTheme.primaryPurple,
+                      color: AppTheme.primaryColor(context),
                       size: 40,
                     ),
                   ),
@@ -67,8 +67,10 @@ class ExerciseDetailScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    color: AppTheme.primaryPurple,
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: AppTheme.primaryColor(context),
+                    ),
                     onPressed: () {
                       // TODO: Añadir nuevo registro
                     },
@@ -135,7 +137,7 @@ class ExerciseDetailScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardBackground,
+        color: AppTheme.surfaceColor(context),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -157,7 +159,7 @@ class ExerciseDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.primaryPurple,
+                color: AppTheme.primaryColor(context),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -165,6 +167,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),

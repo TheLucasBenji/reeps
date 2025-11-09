@@ -193,7 +193,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               style: TextStyle(
                                 color: _birthDate != null
                                     ? null
-                                    : AppTheme.textSecondary,
+                                    : AppTheme.textSecondaryColor(context),
                               ),
                             ),
                           ),
@@ -256,10 +256,14 @@ class _AvatarPreview extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 44,
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: AppTheme.surfaceColor(context),
           backgroundImage: hasUrl ? NetworkImage(url) : null,
           child: !hasUrl
-              ? Icon(Icons.person, size: 44, color: AppTheme.textSecondary)
+              ? Icon(
+                  Icons.person,
+                  size: 44,
+                  color: AppTheme.textSecondaryColor(context),
+                )
               : null,
         ),
         const SizedBox(height: 8),

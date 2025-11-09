@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryPurple,
+                          color: AppTheme.primaryColor(context),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Center(
@@ -207,7 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _loginWithGoogle,
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppTheme.textSecondary),
+                      side: BorderSide(
+                        color: AppTheme.textSecondaryColor(context),
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

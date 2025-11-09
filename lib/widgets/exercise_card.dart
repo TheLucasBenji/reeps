@@ -29,12 +29,12 @@ class ExerciseCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppTheme.primaryPurple.withAlpha((0.2 * 255).round()),
+                color: AppTheme.primaryColor(context).withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
-                color: AppTheme.primaryPurple,
+                color: AppTheme.primaryColor(context),
               ),
             ),
         title: Text(
@@ -45,10 +45,10 @@ class ExerciseCard extends StatelessWidget {
           exercise.muscleGroup,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: AppTheme.textSecondary,
+          color: AppTheme.textSecondaryColor(context),
         ),
         onTap:
             onTap ??

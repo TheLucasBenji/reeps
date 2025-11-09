@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
+import 'package:provider/provider.dart';
+import '../config/theme_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -32,6 +34,65 @@ class SettingsScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 24),
+
+          // Apariencia (tema)
+          _SectionHeader(title: 'Apariencia'),
+          Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor(context).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.color_lens_outlined,
+                  color: AppTheme.primaryColor(context),
+                  size: 20,
+                ),
+              ),
+              title: Text(
+                'Apariencia',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              trailing: Consumer<ThemeProvider>(
+                builder: (context, themeProvider, _) {
+                  final current = themeProvider.mode;
+                  return DropdownButton<ThemeMode>(
+                    value: current,
+                    underline: const SizedBox.shrink(),
+                    items: const [
+                      DropdownMenuItem(
+                        value: ThemeMode.system,
+                        child: Text('Sistema'),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeMode.light,
+                        child: Text('Claro'),
+                      ),
+                      DropdownMenuItem(
+                        value: ThemeMode.dark,
+                        child: Text('Oscuro'),
+                      ),
+                    ],
+                    onChanged: (mode) {
+                      if (mode == null) return;
+                      if (mode == ThemeMode.system) {
+                        themeProvider.setSystem();
+                      } else if (mode == ThemeMode.light) {
+                        themeProvider.setLight();
+                      } else {
+                        themeProvider.setDark();
+                      }
+                    },
+                  );
+                },
+              ),
+              onTap: null,
+            ),
+          ),
 
           // Datos
           _SectionHeader(title: 'Datos'),
@@ -129,7 +190,7 @@ class _SectionHeader extends StatelessWidget {
         title,
         style: Theme.of(
           context,
-        ).textTheme.titleLarge?.copyWith(color: AppTheme.primaryPurple),
+        ).textTheme.titleLarge?.copyWith(color: AppTheme.primaryColor(context)),
       ),
     );
   }
@@ -159,12 +220,12 @@ class _SettingTile extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppTheme.primaryPurple.withOpacity(0.2),
+            color: AppTheme.primaryColor(context).withOpacity(0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             icon,
-            color: titleColor ?? AppTheme.primaryPurple,
+            color: titleColor ?? AppTheme.primaryColor(context),
             size: 20,
           ),
         ),
@@ -177,10 +238,10 @@ class _SettingTile extends StatelessWidget {
         subtitle: subtitle != null
             ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)
             : null,
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: AppTheme.textSecondary,
+          color: AppTheme.textSecondaryColor(context),
         ),
         onTap: onTap,
       ),

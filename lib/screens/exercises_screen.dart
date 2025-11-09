@@ -72,9 +72,9 @@ class _ExercisesScreenState extends State<ExercisesScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppTheme.primaryPurple,
-          labelColor: AppTheme.textPrimary,
-          unselectedLabelColor: AppTheme.textSecondary,
+          indicatorColor: AppTheme.primaryColor(context),
+          labelColor: AppTheme.textPrimaryColor(context),
+          unselectedLabelColor: AppTheme.textSecondaryColor(context),
           tabs: const [
             Tab(text: 'Todos'),
             Tab(text: 'Grupos'),
@@ -124,9 +124,9 @@ class _ExercisesScreenState extends State<ExercisesScreen>
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
                 group,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(color: AppTheme.primaryPurple),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppTheme.primaryColor(context),
+                ),
               ),
             ),
             ...exercises.map(
@@ -147,8 +147,8 @@ class ExerciseSearchDelegate extends SearchDelegate<Exercise?> {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       appBarTheme: AppBarTheme(
-        backgroundColor: AppTheme.darkBackground,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        iconTheme: Theme.of(context).appBarTheme.iconTheme,
       ),
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: Theme.of(context).textTheme.bodyMedium,
@@ -181,15 +181,15 @@ class ExerciseSearchDelegate extends SearchDelegate<Exercise?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     final exercises = ExerciseData.getAllExercises()
         .where(
           (exercise) => SearchUtils.matchesQueryMultipleFields([
@@ -200,7 +200,7 @@ class ExerciseSearchDelegate extends SearchDelegate<Exercise?> {
         .toList();
 
     return Container(
-      color: AppTheme.darkBackground,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: exercises.length,
