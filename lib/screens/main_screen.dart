@@ -19,6 +19,11 @@ class _MainScreenState extends State<MainScreen> {
     const ExercisesScreen(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;

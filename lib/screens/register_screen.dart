@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../config/theme.dart';
+import '../services/auth_service.dart';
 import '../widgets/custom_button.dart';
+import '../utils/auth_error_handler.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -29,21 +32,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  Future<void> _register() async {
     if (_formKey.currentState?.validate() != true) return;
 
     setState(() => _isRegistering = true);
-    // TODO: Implementar registro con Firebase
-    // Simulación rápida de proceso (a reemplazar por lógica real)
-    Future.delayed(const Duration(milliseconds: 400), () {
+
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      await authService.registerWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      // Enviar correo de verificación
+      await authService.sendEmailVerification();
+
+      // TODO: Guardar el nombre del usuario en Firestore (perfil de usuario)
+
       if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
-    });
+      
+      // Mostrar diálogo informativo
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Verifica tu correo'),
+          content: Text(
+            'Se ha enviado un enlace de verificación a ${_emailController.text.trim()}. Por favor verifícalo para asegurar tu cuenta.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Entendido'),
+            ),
+          ],
+        ),
+      );
+
+      // Cerrar sesión para que el usuario tenga que iniciar sesión nuevamente
+      await authService.signOut();
+      
+      if (!mounted) return;
+      // Volver a la pantalla de login
+      Navigator.pop(context);
+
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AuthErrorHandler.getErrorMessage(e)),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isRegistering = false);
+      }
+    }
   }
 
-  void _registerWithGoogle() {
-    // TODO: Implementar registro con Google
-    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+  Future<void> _registerWithGoogle() async {
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      await authService.signInWithGoogle();
+      // La navegación se maneja automáticamente por el AuthWrapper
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al registrarse con Google: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

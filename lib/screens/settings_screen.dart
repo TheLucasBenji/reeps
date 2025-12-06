@@ -3,6 +3,7 @@ import '../config/theme.dart';
 import 'package:provider/provider.dart';
 import '../config/theme_provider.dart';
 import '../widgets/confirmation_dialog.dart';
+import '../services/auth_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -147,12 +148,19 @@ class SettingsScreen extends StatelessWidget {
                   title: 'Cerrar sesión',
                   content: '¿Estás seguro que deseas cerrar sesión?',
                   confirmText: 'Cerrar sesión',
-                  onConfirm: () {
-                    Navigator.pushNamedAndRemoveUntil(
+                  onConfirm: () async {
+                    final authService = Provider.of<AuthService>(
                       context,
-                      '/login',
-                      (route) => false,
+                      listen: false,
                     );
+                    await authService.signOut();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        (route) => false,
+                      );
+                    }
                   },
                 ),
               );

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../config/theme.dart';
+import '../services/auth_service.dart';
 import '../widgets/custom_button.dart';
+import '../utils/auth_error_handler.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,20 +28,68 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState?.validate() != true) return;
 
     setState(() => _isLoggingIn = true);
-    // TODO: Implementar autenticación con Firebase
-    Future.delayed(const Duration(milliseconds: 400), () {
+
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      await authService.signInWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      // Verificar si el correo está verificado
+      if (authService.currentUser != null &&
+          !authService.currentUser!.emailVerified) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Tu correo no ha sido verificado. Por favor revisa tu bandeja de entrada.',
+            ),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
+      
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      }
+    } catch (e) {
       if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
-    });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AuthErrorHandler.getErrorMessage(e)),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoggingIn = false);
+      }
+    }
   }
 
-  void _loginWithGoogle() {
-    // TODO: Implementar inicio de sesión con Google
-    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+  Future<void> _loginWithGoogle() async {
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final credential = await authService.signInWithGoogle();
+      
+      if (credential != null && mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al iniciar sesión con Google: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

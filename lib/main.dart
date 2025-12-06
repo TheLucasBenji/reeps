@@ -1,8 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'config/theme.dart';
 import 'config/theme_provider.dart';
+import 'services/auth_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
@@ -17,12 +20,21 @@ import 'models/exercise.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inicializa los datos de formato de fecha para el locale español (evita LocaleDataException)
+  
+  // Inicializar Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Inicializa los datos de formato de fecha para el locale español
   await initializeDateFormatting('es_ES', null);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider<AuthService>(create: (_) => AuthService()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -41,10 +53,11 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.mode,
-          home: const LoginScreen(),
+          home: const AuthWrapper(),
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/':
+                return MaterialPageRoute(builder: (_) => const AuthWrapper());
               case '/login':
                 return MaterialPageRoute(builder: (_) => const LoginScreen());
               case '/register':
@@ -85,6 +98,29 @@ class MyApp extends StatelessWidget {
             }
           },
         );
+      },
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    return StreamBuilder(
+      stream: authService.authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasData) {
+          return const MainScreen();
+        }
+        return const LoginScreen();
       },
     );
   }

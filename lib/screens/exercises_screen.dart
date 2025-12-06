@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../data/exercise_data.dart';
 import '../models/exercise.dart';
 import '../config/theme.dart';
 import '../utils/search_utils.dart';
 import '../widgets/exercise_card.dart';
+import '../services/firestore_service.dart';
 
 class ExercisesScreen extends StatefulWidget {
   const ExercisesScreen({super.key});
@@ -16,7 +16,24 @@ class _ExercisesScreenState extends State<ExercisesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String _searchQuery = '';
-  final List<String> _muscleGroups = ExerciseData.getMuscleGroups();
+  // Los grupos musculares siguen siendo estáticos por ahora, o podrían derivarse de los ejercicios
+  final List<String> _muscleGroups = [
+    'Todos',
+    'Cuádriceps',
+    'Pecho',
+    'Espalda',
+    'Hombros',
+    'Bíceps',
+    'Tríceps',
+    'Piernas',
+    'Abdominales',
+    'Cardio',
+    'Glúteos',
+    'Dorsales',
+    'Pectorales',
+    'Pantorrillas',
+    'Isquiotibiales',
+  ];
 
   @override
   void initState() {
@@ -30,30 +47,24 @@ class _ExercisesScreenState extends State<ExercisesScreen>
     super.dispose();
   }
 
-  List<Exercise> _getFilteredExercises() {
-    List<Exercise> exercises = ExerciseData.getAllExercises();
-
-    if (_searchQuery.isNotEmpty) {
-      exercises = exercises
-          .where(
-            (exercise) => SearchUtils.matchesQueryMultipleFields([
-              exercise.name,
-              exercise.muscleGroup,
-            ], _searchQuery),
-          )
-          .toList();
+  List<Exercise> _filterExercises(List<Exercise> allExercises) {
+    if (_searchQuery.isEmpty) {
+      return allExercises;
     }
-
-    return exercises;
+    return allExercises
+        .where(
+          (exercise) => SearchUtils.matchesQueryMultipleFields([
+            exercise.name,
+            exercise.muscleGroup,
+          ], _searchQuery),
+        )
+        .toList();
   }
 
-  List<Exercise> _getExercisesByGroup(String group) {
-    List<Exercise> exercises = _getFilteredExercises();
-
+  List<Exercise> _getExercisesByGroup(List<Exercise> exercises, String group) {
     if (group == 'Todos') {
       return exercises;
     }
-
     return exercises.where((e) => e.muscleGroup == group).toList();
   }
 
@@ -65,7 +76,7 @@ class _ExercisesScreenState extends State<ExercisesScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
+            onPressed: () async {
               showSearch(context: context, delegate: ExerciseSearchDelegate());
             },
           ),
@@ -81,21 +92,39 @@ class _ExercisesScreenState extends State<ExercisesScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Tab de todos los ejercicios
-          _buildAllExercisesList(),
+      body: StreamBuilder<List<Exercise>>(
+        stream: FirestoreService().getExercises(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // Tab de grupos musculares
-          _buildGroupedExercises(),
-        ],
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final allExercises = snapshot.data ?? [];
+          final filteredExercises = _filterExercises(allExercises);
+
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              // Tab de todos los ejercicios
+              _buildAllExercisesList(filteredExercises),
+
+              // Tab de grupos musculares
+              _buildGroupedExercises(filteredExercises),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildAllExercisesList() {
-    final exercises = _getFilteredExercises();
+  Widget _buildAllExercisesList(List<Exercise> exercises) {
+    if (exercises.isEmpty) {
+      return const Center(child: Text('No se encontraron ejercicios'));
+    }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -107,13 +136,13 @@ class _ExercisesScreenState extends State<ExercisesScreen>
     );
   }
 
-  Widget _buildGroupedExercises() {
+  Widget _buildGroupedExercises(List<Exercise> allExercises) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: _muscleGroups.length - 1, // Excluir "Todos"
       itemBuilder: (context, index) {
         final group = _muscleGroups[index + 1];
-        final exercises = _getExercisesByGroup(group);
+        final exercises = _getExercisesByGroup(allExercises, group);
 
         if (exercises.isEmpty) return const SizedBox.shrink();
 
@@ -190,24 +219,33 @@ class ExerciseSearchDelegate extends SearchDelegate<Exercise?> {
   }
 
   Widget _buildSearchResults(BuildContext context) {
-    final exercises = ExerciseData.getAllExercises()
-        .where(
-          (exercise) => SearchUtils.matchesQueryMultipleFields([
-            exercise.name,
-            exercise.muscleGroup,
-          ], query),
-        )
-        .toList();
+    return StreamBuilder<List<Exercise>>(
+      stream: FirestoreService().getExercises(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: exercises.length,
-        itemBuilder: (context, index) {
-          return ExerciseCard(exercise: exercises[index]);
-        },
-      ),
+        final exercises = snapshot.data!
+            .where(
+              (exercise) => SearchUtils.matchesQueryMultipleFields([
+                exercise.name,
+                exercise.muscleGroup,
+              ], query),
+            )
+            .toList();
+
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: exercises.length,
+            itemBuilder: (context, index) {
+              return ExerciseCard(exercise: exercises[index]);
+            },
+          ),
+        );
+      },
     );
   }
 }
