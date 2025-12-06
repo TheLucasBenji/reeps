@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "20014515843",
+    "project_id": "reeps-gym",
+    "storage_bucket": "reeps-gym.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20014515843:android:486f75afdf45d9d8153db6",
+        "android_client_info": {
+          "package_name": "com.example.reeps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20014515843-ltdbppvba1g0unrdg39du3qha34n2agb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVPF5ISEA7896STxAC3r89JW33kwdBWew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20014515843-ltdbppvba1g0unrdg39du3qha34n2agb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "20014515843-jlpsoc0hep36q0tr79u8moajbtmja1lt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.luks.reeps"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
