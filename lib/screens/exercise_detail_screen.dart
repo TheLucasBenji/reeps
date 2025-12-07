@@ -24,42 +24,106 @@ class ExerciseDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con icono
+            // Header con imagen o icono
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(32),
+              height: exercise.imageUrl != null && exercise.imageUrl!.isNotEmpty ? 250 : null,
+              padding: exercise.imageUrl != null && exercise.imageUrl!.isNotEmpty 
+                  ? EdgeInsets.zero 
+                  : const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryColor(context).withOpacity(0.3),
-                    AppTheme.accentColor(context).withOpacity(0.1),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: AppTheme.surfaceColor(context),
+                gradient: exercise.imageUrl != null && exercise.imageUrl!.isNotEmpty
+                    ? null
+                    : LinearGradient(
+                        colors: [
+                          AppTheme.primaryColor(context).withOpacity(0.3),
+                          AppTheme.accentColor(context).withOpacity(0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
               ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor(context).withOpacity(0.3),
-                      shape: BoxShape.circle,
+              child: exercise.imageUrl != null && exercise.imageUrl!.isNotEmpty
+                  ? Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(
+                          exercise.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.error_outline, color: Colors.grey),
+                                  Text("Error al cargar imagen", style: TextStyle(color: Colors.grey)),
+                                ],
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / 
+                                      loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                        ),
+                        // Overlay para que el botón back sea visible si existiera, o solo estética
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.7),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: Text(
+                              exercise.muscleGroup,
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor(context).withOpacity(0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
+                            color: AppTheme.primaryColor(context),
+                            size: 40,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          exercise.muscleGroup,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
-                    child: Icon(
-                      IconUtils.getMuscleGroupIcon(exercise.muscleGroup),
-                      color: AppTheme.primaryColor(context),
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    exercise.muscleGroup,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
             ),
 
             const SizedBox(height: 24),
