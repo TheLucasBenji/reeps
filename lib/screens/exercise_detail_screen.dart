@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/exercise.dart';
+import '../models/workout_record.dart';
 import '../config/theme.dart';
 import '../utils/icon_utils.dart';
+import '../services/firestore_service.dart';
+import '../services/auth_service.dart';
+import 'add_workout_screen.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
   final Exercise exercise;
@@ -10,6 +15,9 @@ class ExerciseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+    final user = authService.currentUser;
+
     return Scaffold(
       appBar: AppBar(title: Text(exercise.name)),
       body: SingleChildScrollView(
@@ -72,7 +80,12 @@ class ExerciseDetailScreen extends StatelessWidget {
                       color: AppTheme.primaryColor(context),
                     ),
                     onPressed: () {
-                      // TODO: Añadir nuevo registro
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddWorkoutScreen(initialExercise: exercise),
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -81,44 +94,75 @@ class ExerciseDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Lista de registros de ejemplo
-            _buildRecordCard(
-              context,
-              date: '12 de junio de 2025',
-              weight: '100 kg',
-              reps: '5 reps',
-              sets: '3 sets',
-              isPR: true,
-            ),
-            _buildRecordCard(
-              context,
-              date: '24 de mayo de 2025',
-              weight: '95 kg',
-              reps: '5 reps',
-              sets: '3 sets',
-            ),
-            _buildRecordCard(
-              context,
-              date: '16 de mayo de 2025',
-              weight: '90 kg',
-              reps: '5 reps',
-              sets: '3 sets',
-            ),
-            _buildRecordCard(
-              context,
-              date: '29 de abril de 2025',
-              weight: '75 kg',
-              reps: '5 reps',
-              sets: '3 sets',
-            ),
+            // Lista de registros dinámica
+            if (user != null)
+              StreamBuilder<List<WorkoutRecord>>(
+                stream: FirestoreService().getWorkoutRecords(user.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-            const SizedBox(height: 100),
+                  // Filtrar solo los records de este ejercicio
+                  final allRecords = snapshot.data ?? [];
+                  final exerciseRecords = allRecords.where((r) => r.exerciseId == exercise.id).toList();
+
+                  if (exerciseRecords.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(32),
+                      child: Center(
+                        child: Text('No hay registros aún. ¡Añade el primero!'),
+                      ),
+                    );
+                  }
+
+                  // Calcular PR
+                  double maxWeight = 0;
+                  for (var r in exerciseRecords) {
+                    if (r.weight > maxWeight) maxWeight = r.weight;
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: exerciseRecords.length,
+                    itemBuilder: (context, index) {
+                      final record = exerciseRecords[index];
+                      final isPR = record.weight == maxWeight && maxWeight > 0;
+                      final dateStr = DateFormat("d 'de' MMMM 'de' y", 'es_ES').format(record.date);
+
+                      return _buildRecordCard(
+                        context,
+                        date: dateStr,
+                        weight: '${record.weight.toStringAsFixed(record.weight.truncateToDouble() == record.weight ? 0 : 1)} ${record.unit}',
+                        reps: '${record.reps} reps',
+                        sets: '${record.sets} sets',
+                        isPR: isPR,
+                      );
+                    },
+                  );
+                },
+              )
+            else
+               const Center(child: Text('Debes iniciar sesión para ver tu historial')),
+
+
+            const SizedBox(height: 20),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Añadir nuevo registro
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddWorkoutScreen(initialExercise: exercise),
+            ),
+          );
         },
         child: const Icon(Icons.add, size: 32),
       ),

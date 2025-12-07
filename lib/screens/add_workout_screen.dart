@@ -11,7 +11,9 @@ import '../services/firestore_service.dart';
 import '../services/auth_service.dart';
 
 class AddWorkoutScreen extends StatefulWidget {
-  const AddWorkoutScreen({super.key});
+  final Exercise? initialExercise;
+
+  const AddWorkoutScreen({super.key, this.initialExercise});
 
   @override
   State<AddWorkoutScreen> createState() => _AddWorkoutScreenState();
@@ -35,6 +37,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedExercise = widget.initialExercise;
     // Valores por defecto
     _setsController.text = '3';
     _repsController.text = '10';
