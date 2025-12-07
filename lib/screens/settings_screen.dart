@@ -4,6 +4,13 @@ import 'package:provider/provider.dart';
 import '../config/theme_provider.dart';
 import '../widgets/confirmation_dialog.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import 'privacy_policy_screen.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -101,24 +108,99 @@ class SettingsScreen extends StatelessWidget {
           _SettingTile(
             icon: Icons.cloud_download_outlined,
             title: 'Exportar datos',
-            onTap: () {
-              // TODO: Exportar datos
+            onTap: () async {
+              try {
+                 final authService = Provider.of<AuthService>(context, listen: false);
+                 final user = authService.currentUser;
+                 if (user == null) return;
+
+                 final messenger = ScaffoldMessenger.of(context);
+                 messenger.showSnackBar(const SnackBar(content: Text('Generando archivo...')));
+
+                 final firestore = FirestoreService();
+                 final profile = await firestore.getUserProfile(user.uid);
+                 final workouts = await firestore.getRawWorkoutRecords(user.uid);
+                 
+                 workouts.sort((a, b) => b.date.compareTo(a.date));
+
+                 final data = {
+                   'profile': profile?.toMap(),
+                   'workouts': workouts.map((w) {
+                     final map = w.toMap();
+                     // Convertir fecha a string
+                     if (w.date != null) {
+                        map['date'] = w.date.toIso8601String();
+                     }
+                     return map;
+                   }).toList(),
+                   'exportedAt': DateTime.now().toIso8601String(),
+                 };
+
+                 final jsonString = jsonEncode(data);
+
+                 // Guardar en archivo temporal
+                 final tempDir = await getTemporaryDirectory();
+                 final file = File('${tempDir.path}/reeps_data_${user.uid}.json');
+                 await file.writeAsString(jsonString);
+
+                 // Compartir
+                 await Share.shareXFiles([XFile(file.path)]);
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al exportar: $e')),
+                  );
+                }
+              }
             },
           ),
           _SettingTile(
             icon: Icons.cloud_upload_outlined,
             title: 'Importar datos',
-            onTap: () {
-              // TODO: Importar datos
+            onTap: () async {
+              try {
+                final authService = Provider.of<AuthService>(context, listen: false);
+                final user = authService.currentUser;
+                if (user == null) return;
+
+                // Seleccionar archivo
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                   type: FileType.custom,
+                   allowedExtensions: ['json'],
+                );
+
+                if (result != null && result.files.single.path != null) {
+                  final file = File(result.files.single.path!);
+                  final content = await file.readAsString();
+                  final data = jsonDecode(content);
+
+                  if (context.mounted) {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Importando datos...')),
+                    );
+                    
+                    await FirestoreService().importData(user.uid, data);
+                    
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Datos importados correctamente. Reinicia para ver cambios complejos.')),
+                      );
+                    }
+                  }
+                }
+              } catch (e) {
+                 if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al importar: $e')),
+                  );
+                }
+              }
             },
           ),
           _SettingTile(
             icon: Icons.backup_outlined,
             title: 'Respaldo en la nube',
-            subtitle: 'Último respaldo: Hoy',
-            onTap: () {
-              // TODO: Configuración de respaldo
-            },
+            subtitle: 'Sincronizado automáticamente',
           ),
 
           const SizedBox(height: 24),
@@ -129,10 +211,13 @@ class SettingsScreen extends StatelessWidget {
             icon: Icons.privacy_tip_outlined,
             title: 'Política de privacidad',
             onTap: () {
-              // TODO: Mostrar política de privacidad
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+              );
             },
           ),
-
+          
           const SizedBox(height: 24),
 
           // Cerrar sesión
@@ -196,14 +281,14 @@ class _SettingTile extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Color? titleColor;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _SettingTile({
     required this.icon,
     required this.title,
     this.subtitle,
     this.titleColor,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
@@ -233,11 +318,11 @@ class _SettingTile extends StatelessWidget {
         subtitle: subtitle != null
             ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)
             : null,
-        trailing: Icon(
+        trailing: onTap != null ? Icon(
           Icons.arrow_forward_ios,
           size: 16,
           color: AppTheme.textSecondaryColor(context),
-        ),
+        ) : null,
         onTap: onTap,
       ),
     );

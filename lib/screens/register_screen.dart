@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../config/theme.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/user_profile.dart';
 import '../widgets/custom_button.dart';
 import '../utils/auth_error_handler.dart';
 
@@ -47,7 +50,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Enviar correo de verificación
       await authService.sendEmailVerification();
 
-      // TODO: Guardar el nombre del usuario en Firestore (perfil de usuario)
+      // Guardar perfil en Firestore
+      final user = authService.currentUser;
+      if (user != null) {
+        final profile = UserProfile(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+        );
+        await FirestoreService().saveUserProfile(user.uid, profile);
+      }
 
       if (!mounted) return;
       
@@ -96,7 +107,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _registerWithGoogle() async {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      await authService.signInWithGoogle();
+      final credential = await authService.signInWithGoogle();
+
+      if (credential?.user != null) {
+        final user = credential!.user!;
+        final profile = UserProfile(
+          name: user.displayName,
+          email: user.email,
+          avatar: user.photoURL,
+        );
+         await FirestoreService().saveUserProfile(user.uid, profile);
+      }
+      
       // La navegación se maneja automáticamente por el AuthWrapper
     } catch (e) {
       if (!mounted) return;
@@ -297,14 +319,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    icon: Image.asset(
-                      'assets/google_logo.png',
-                      width: 24,
-                      height: 24,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.g_mobiledata, size: 32);
-                      },
-                    ),
+                    icon: const Icon(FontAwesomeIcons.google, size: 24),
                     label: const Text('Continuar con Google'),
                   ),
                 ),

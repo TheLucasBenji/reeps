@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '13.0'
+platform :ios, '13.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -39,5 +39,29 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    # Optimizaciones de compilación para reducir tiempo de build
+    target.build_configurations.each do |config|
+      # Desactivar Bitcode (ya no es requerido por Apple desde Xcode 14)
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      
+      # Habilitar compilación modular para builds más rápidos
+      config.build_settings['CLANG_ENABLE_MODULE_DEBUGGING'] = 'NO'
+      
+      # Optimizar nivel de compilación para Debug
+      if config.name == 'Debug'
+        config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
+        config.build_settings['SWIFT_COMPILATION_MODE'] = 'incremental'
+        config.build_settings['GCC_OPTIMIZATION_LEVEL'] = '0'
+        # Reducir nivel de debug para compilar más rápido
+        config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
+      end
+      
+      # Deployment target consistente
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      
+      # Habilitar builds paralelos
+      config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+    end
   end
 end

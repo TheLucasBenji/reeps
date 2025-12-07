@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import '../widgets/custom_button.dart';
+import '../services/firestore_service.dart';
+import '../services/auth_service.dart';
+import '../models/user_profile.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -19,6 +23,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   DateTime? _birthDate;
   String? _gender;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final user = authService.currentUser;
+      if (user != null) {
+        final profile = await FirestoreService().getUserProfile(user.uid);
+        if (profile != null) {
+          _nameController.text = profile.name ?? '';
+          _emailController.text = profile.email ?? user.email ?? '';
+          _avatarController.text = profile.avatar ?? '';
+          _heightController.text = profile.height ?? '';
+          _weightController.text = profile.weight ?? '';
+          if (profile.birthDate != null) {
+            _birthDate = DateTime.parse(profile.birthDate!);
+          }
+          _gender = profile.gender;
+        } else {
+             _emailController.text = user.email ?? '';
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar perfil: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -71,20 +111,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    
+    setState(() => _isLoading = true);
 
-    final updated = {
-      'name': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'avatar': _avatarController.text.trim(),
-      'height': _heightController.text.trim(),
-      'weight': _weightController.text.trim(),
-      'birthDate': _birthDate?.toIso8601String(),
-      'gender': _gender,
-    };
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final user = authService.currentUser;
+      
+      if (user != null) {
+        final profile = UserProfile(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          avatar: _avatarController.text.trim(),
+          height: _heightController.text.trim(),
+          weight: _weightController.text.trim(),
+          birthDate: _birthDate?.toIso8601String(),
+          gender: _gender,
+        );
 
-    Navigator.of(context).pop(updated);
+        await FirestoreService().saveUserProfile(user.uid, profile);
+
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+         ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -95,7 +156,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
+          child: _isLoading 
+              ? const Center(child: CircularProgressIndicator()) 
+              : Column(
             children: [
               _AvatarPreview(controller: _avatarController),
               const SizedBox(height: 16),
@@ -228,7 +291,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         const SizedBox(height: 24),
 
-                        CustomButton(text: 'Guardar', onPressed: _save),
+                        CustomButton(
+                          text: 'Guardar', 
+                          onPressed: _isLoading ? () {} : _save,
+                          isLoading: _isLoading,
+                        ),
                       ],
                     ),
                   ),

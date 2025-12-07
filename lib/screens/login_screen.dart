@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
+import '../models/user_profile.dart';
 import '../widgets/custom_button.dart';
 import '../utils/auth_error_handler.dart';
 
@@ -78,8 +80,20 @@ class _LoginScreenState extends State<LoginScreen> {
       final authService = Provider.of<AuthService>(context, listen: false);
       final credential = await authService.signInWithGoogle();
       
-      if (credential != null && mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      if (credential != null) {
+        if (credential.user != null) {
+           final user = credential.user!;
+           final profile = UserProfile(
+             name: user.displayName,
+             email: user.email,
+             avatar: user.photoURL,
+           );
+           await FirestoreService().saveUserProfile(user.uid, profile);
+        }
+
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+        }
       }
     } catch (e) {
       if (!mounted) return;
