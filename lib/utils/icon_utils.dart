@@ -1,33 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import '../data/exercise_data.dart';
 import '../models/exercise.dart';
 
 class IconUtils {
   static IconData getMuscleGroupIcon(String muscleGroup) {
     switch (muscleGroup) {
-      case 'Cuádriceps':
-      case 'Piernas':
-        return FontAwesomeIcons.personRunning;
-      case 'Pecho':
-        return FontAwesomeIcons.personSwimming;
-      case 'Espalda':
-      case 'Dorsales':
-        return FontAwesomeIcons.weightHanging;
-      case 'Hombros':
-        return FontAwesomeIcons.person;
-      case 'Bíceps':
-        return FontAwesomeIcons.handFist;
-      case 'Tríceps':
-        return FontAwesomeIcons.hand;
-      case 'Abdominales':
-        return FontAwesomeIcons.heartPulse;
-      case 'Cardio':
-        return FontAwesomeIcons.bicycle;
-      case 'Glúteos':
-        return FontAwesomeIcons.personWalking;
+      case 'Pecho': // Chest
+        return MdiIcons.weightLifter;
+      case 'Espalda': // Back
+        return MdiIcons.rowing;
+      case 'Hombros': // Shoulders
+        return MdiIcons.humanHandsup;
+      case 'Bíceps': // Biceps
+        return MdiIcons.armFlex;
+      case 'Tríceps': // Triceps
+        return MdiIcons.armFlexOutline;
+      case 'Abdominales': // Abs
+        return MdiIcons.stomach; // If stomach doesn't exist, we might need a fallback, but MdiIcons usually has it. Let's use generic if unsure.
+      case 'Cardio': // Cardio
+        return MdiIcons.heartPulse;
+      case 'Piernas': // Legs
+        return MdiIcons.run;
       default:
-        return FontAwesomeIcons.dumbbell;
+        return MdiIcons.dumbbell;
     }
   }
 

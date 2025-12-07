@@ -21,7 +21,6 @@ class _ExercisesScreenState extends State<ExercisesScreen>
   String? _selectedMuscleGroup; // Estado para el grupo seleccionado
 
   final List<String> _muscleGroups = [
-    'Cuádriceps',
     'Pecho',
     'Espalda',
     'Hombros',
@@ -30,11 +29,6 @@ class _ExercisesScreenState extends State<ExercisesScreen>
     'Piernas',
     'Abdominales',
     'Cardio',
-    'Glúteos',
-    'Dorsales',
-    'Pectorales',
-    'Pantorrillas',
-    'Isquiotibiales',
   ];
 
   @override

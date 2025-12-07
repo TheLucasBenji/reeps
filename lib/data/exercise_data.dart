@@ -3,20 +3,20 @@ import '../models/exercise.dart';
 class ExerciseData {
   static List<Exercise> getAllExercises() {
     return [
-      // Cuádriceps
-      Exercise(id: '1', name: 'Sentadillas', muscleGroup: 'Cuádriceps'),
-      Exercise(id: '2', name: 'Prensa de piernas', muscleGroup: 'Cuádriceps'),
+      // Piernas (Cuádriceps)
+      Exercise(id: '1', name: 'Sentadillas', muscleGroup: 'Piernas'),
+      Exercise(id: '2', name: 'Prensa de piernas', muscleGroup: 'Piernas'),
       Exercise(
         id: '3',
         name: 'Extensiones de piernas',
-        muscleGroup: 'Cuádriceps',
+        muscleGroup: 'Piernas',
       ),
-      Exercise(id: '4', name: 'Zancadas', muscleGroup: 'Cuádriceps'),
-      Exercise(id: '5', name: 'Sentadilla búlgara', muscleGroup: 'Cuádriceps'),
+      Exercise(id: '4', name: 'Zancadas', muscleGroup: 'Piernas'),
+      Exercise(id: '5', name: 'Sentadilla búlgara', muscleGroup: 'Piernas'),
       Exercise(
         id: '6',
         name: 'Elevación de talones',
-        muscleGroup: 'Cuádriceps',
+        muscleGroup: 'Piernas',
       ),
 
       // Pecho
@@ -91,40 +91,40 @@ class ExerciseData {
       Exercise(id: '45', name: 'Saltos de caja', muscleGroup: 'Cardio'),
       Exercise(id: '46', name: 'Mountain climbers', muscleGroup: 'Cardio'),
 
-      // Glúteos
-      Exercise(id: '47', name: 'Patada de glúteo', muscleGroup: 'Glúteos'),
-      Exercise(id: '48', name: 'Abducción de cadera', muscleGroup: 'Glúteos'),
-      Exercise(id: '49', name: 'Puente de glúteos', muscleGroup: 'Glúteos'),
+      // Piernas (Glúteos)
+      Exercise(id: '47', name: 'Patada de glúteo', muscleGroup: 'Piernas'),
+      Exercise(id: '48', name: 'Abducción de cadera', muscleGroup: 'Piernas'),
+      Exercise(id: '49', name: 'Puente de glúteos', muscleGroup: 'Piernas'),
+      
+      // Combinados
+      // Espalda (continuación)
+      Exercise(id: '50', name: 'Pull over en polea', muscleGroup: 'Espalda'),
+      Exercise(id: '51', name: 'Remo en máquina', muscleGroup: 'Espalda'),
 
-      // Dorsales
-      Exercise(id: '50', name: 'Pull over en polea', muscleGroup: 'Dorsales'),
-      Exercise(id: '51', name: 'Remo en máquina', muscleGroup: 'Dorsales'),
+      // Pecho (continuación)
+      Exercise(id: '52', name: 'Cristos en polea', muscleGroup: 'Pecho'),
+      Exercise(id: '53', name: 'Press en máquina', muscleGroup: 'Pecho'),
 
-      // Pectorales
-      Exercise(id: '52', name: 'Cristos en polea', muscleGroup: 'Pectorales'),
-      Exercise(id: '53', name: 'Press en máquina', muscleGroup: 'Pectorales'),
-
-      // Pantorrillas
+      // Piernas (Pantorrillas)
       Exercise(
         id: '54',
         name: 'Elevación de pantorrillas en prensa',
-        muscleGroup: 'Pantorrillas',
+        muscleGroup: 'Piernas',
       ),
 
-      // Isquiotibiales
+      // Piernas (Isquiotibiales)
       Exercise(
         id: '55',
         name: 'Peso muerto rumano',
-        muscleGroup: 'Isquiotibiales',
+        muscleGroup: 'Piernas',
       ),
-      Exercise(id: '56', name: 'Buenos días', muscleGroup: 'Isquiotibiales'),
+      Exercise(id: '56', name: 'Buenos días', muscleGroup: 'Piernas'),
     ];
   }
 
   static List<String> getMuscleGroups() {
     return [
       'Todos',
-      'Cuádriceps',
       'Pecho',
       'Espalda',
       'Hombros',
@@ -133,11 +133,6 @@ class ExerciseData {
       'Piernas',
       'Abdominales',
       'Cardio',
-      'Glúteos',
-      'Dorsales',
-      'Pectorales',
-      'Pantorrillas',
-      'Isquiotibiales',
     ];
   }
 }

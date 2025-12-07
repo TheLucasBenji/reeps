@@ -260,6 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       sideTitles: SideTitles(
                                         showTitles: true,
                                         reservedSize: 30,
+                                        interval: 1,
                                         getTitlesWidget: (value, meta) {
                                           const days = [
                                             'Lu',
