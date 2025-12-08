@@ -6,6 +6,7 @@ import '../utils/icon_utils.dart';
 import '../models/workout_record.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
+import '../utils/format_utils.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -111,43 +112,63 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return spots;
   }
 
-  // Calcular cambio porcentual (Comparar periodo actual con anterior)
+  // Calcular cambio porcentual (Comparar periodo actual con anterior - TO DATE)
   String _calculateGrowth(List<WorkoutRecord> allRecords, String period) {
-     // Lógica simplificada: 
-     // Semana: comparar sum(esta semana) vs sum(semana pasada)
      final now = DateTime.now();
-     final today = DateTime(now.year, now.month, now.day);
-     
+     // Comparar (Inicio periodo actual -> Ahora) vs (Inicio periodo anterior -> Inicio periodo anterior + Diferencia de tiempo)
+
      DateTime startCurrent;
      DateTime endCurrent = now;
      DateTime startPrevious;
-     DateTime endPrevious;
+     DateTime endPrevious; // Será startPrevious + duration
 
      if (period == 'Semana') {
+       // Inicio de esta semana (Lunes)
+       final today = DateTime(now.year, now.month, now.day);
        startCurrent = today.subtract(Duration(days: today.weekday - 1));
+       
+       // Inicio de la semana pasada
        startPrevious = startCurrent.subtract(const Duration(days: 7));
-       endPrevious = startCurrent.subtract(const Duration(microseconds: 1));
+       
+       // Duración transcurrida desde el inicio de la semana actual
+       final duration = endCurrent.difference(startCurrent);
+       
+       // Fin relativo de la semana pasada
+       endPrevious = startPrevious.add(duration);
      } else if (period == 'Mes') {
-       // Comparar este mes vs mes pasado
+       // Inicio de este mes
        startCurrent = DateTime(now.year, now.month, 1);
-       startPrevious = DateTime(now.year, now.month - 1, 1);
-       // Fin del mes anterior
-       endPrevious = startCurrent.subtract(const Duration(seconds: 1));
+       
+       // Inicio del mes pasado
+       // Manejo seguro de mes previo (Enero -> mes 12 del año anterior)
+       if (now.month == 1) {
+         startPrevious = DateTime(now.year - 1, 12, 1);
+       } else {
+         startPrevious = DateTime(now.year, now.month - 1, 1);
+       }
+
+       final duration = endCurrent.difference(startCurrent);
+       endPrevious = startPrevious.add(duration);
+       
      } else {
-       // Total: comparar este año vs año pasado (o mes actual vs mes pasado global)
-       // Simplificación: comparar este mes vs mes pasado
-       startCurrent = DateTime(now.year, now.month, 1);
-       startPrevious = DateTime(now.year, now.month - 1, 1);
-       endPrevious = startCurrent.subtract(const Duration(seconds: 1));
+       // Año
+       startCurrent = DateTime(now.year, 1, 1);
+       startPrevious = DateTime(now.year - 1, 1, 1);
+       
+       final duration = endCurrent.difference(startCurrent);
+       endPrevious = startPrevious.add(duration);
      }
 
      double currentVol = 0;
      double prevVol = 0;
 
      for(var r in allRecords) {
-       if(r.date.isAfter(startCurrent) && r.date.isBefore(endCurrent.add(const Duration(days: 1)))) {
+       // Nota: Asegurarse de comparar todo el timestamp
+       if(r.date.isAfter(startCurrent.subtract(const Duration(microseconds: 1))) && 
+          r.date.isBefore(endCurrent.add(const Duration(microseconds: 1)))) {
          currentVol += r.totalWeight;
-       } else if (r.date.isAfter(startPrevious) && r.date.isBefore(endPrevious)) {
+       } else if (r.date.isAfter(startPrevious.subtract(const Duration(microseconds: 1))) && 
+                  r.date.isBefore(endPrevious.add(const Duration(microseconds: 1)))) {
          prevVol += r.totalWeight;
        }
      }
@@ -434,7 +455,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         context, 
                         icon: IconUtils.getIconForExercise(record.exerciseName),
                         name: record.exerciseName,
-                        details: '${record.weight.toStringAsFixed(0)}${record.unit} × ${record.reps} reps × ${record.sets} sets',
+                        details: '${FormatUtils.formatWeight(record.weight, decimals: 0)} × ${record.reps} reps × ${record.sets} sets',
                         date: dateStr,
                       );
                     },

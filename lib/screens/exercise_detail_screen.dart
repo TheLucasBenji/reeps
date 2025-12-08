@@ -6,6 +6,7 @@ import '../config/theme.dart';
 import '../utils/icon_utils.dart';
 import '../services/firestore_service.dart';
 import '../services/auth_service.dart';
+import '../utils/format_utils.dart';
 import 'add_workout_screen.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
@@ -202,7 +203,7 @@ class ExerciseDetailScreen extends StatelessWidget {
                       return _buildRecordCard(
                         context,
                         date: dateStr,
-                        weight: '${record.weight.toStringAsFixed(record.weight.truncateToDouble() == record.weight ? 0 : 1)} ${record.unit}',
+                        weight: FormatUtils.formatWeight(record.weight, decimals: record.weight.truncateToDouble() == record.weight ? 0 : 1),
                         reps: '${record.reps} reps',
                         sets: '${record.sets} sets',
                         isPR: isPR,

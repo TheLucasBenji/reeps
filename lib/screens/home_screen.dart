@@ -5,6 +5,7 @@ import '../models/user_profile.dart';
 import '../models/workout_record.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
+import '../utils/format_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -230,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${currentVolume.toInt()} kg movidos en\n7 días!',
+                                    '${FormatUtils.formatWeight(currentVolume)} movidos en\n7 días!',
                                     style:
                                         Theme.of(context).textTheme.displaySmall,
                                   ),

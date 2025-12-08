@@ -120,14 +120,23 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
         throw Exception('Usuario no autenticado');
       }
 
+      // Obtener peso ingresado
+      double weightValue = double.parse(_weightController.text.replaceAll(',', '.'));
+      
+      // Si el usuario ingresó en libras, convertir a kilogramos
+      // 1 lb = 0.453592 kg
+      if (_selectedUnit == 'lb') {
+        weightValue = weightValue * 0.453592;
+      }
+      
       final record = WorkoutRecord(
         id: '', // Firestore genera el ID
         exerciseId: _selectedExercise!.id,
         exerciseName: _selectedExercise!.name,
-        weight: double.parse(_weightController.text.replaceAll(',', '.')),
+        weight: weightValue, // Siempre guardado en kg
         reps: int.parse(_repsController.text),
         sets: int.parse(_setsController.text),
-        unit: _selectedUnit,
+        unit: 'kg', // Siempre guardamos en kg internamente
         date: DateTime.now(),
         userId: user.uid,
       );
