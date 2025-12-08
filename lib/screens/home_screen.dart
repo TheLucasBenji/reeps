@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
 import '../models/user_profile.dart';
 import '../models/workout_record.dart';
@@ -18,12 +19,39 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
   String? _userId;
+  String _userName = 'Usuario';
+  static const _userNameKey = 'cached_user_name';
 
   @override
   void initState() {
     super.initState();
     _userId = _authService.currentUser?.uid;
+    _loadUserName();
   }
+
+  Future<void> _loadUserName() async {
+    // Primero cargar desde cache local (instantáneo)
+    final prefs = await SharedPreferences.getInstance();
+    final cachedName = prefs.getString(_userNameKey);
+    if (mounted && cachedName != null && cachedName.isNotEmpty) {
+      setState(() {
+        _userName = cachedName;
+      });
+    }
+
+    // Luego actualizar desde Firestore (en segundo plano)
+    if (_userId != null) {
+      final profile = await _firestoreService.getUserProfile(_userId!);
+      if (mounted && profile?.name != null && profile!.name!.isNotEmpty) {
+        setState(() {
+          _userName = profile.name!;
+        });
+        // Guardar en cache para la próxima vez
+        await prefs.setString(_userNameKey, profile.name!);
+      }
+    }
+  }
+
 
   // Estructura para almacenar estadísticas
   Map<String, dynamic> _calculateStats(List<WorkoutRecord> records) {
@@ -152,16 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Saludo con FutureBuilder
-            FutureBuilder<UserProfile?>(
-              future: _firestoreService.getUserProfile(_userId!),
-              builder: (context, snapshot) {
-                final userName = snapshot.data?.name ?? 'Usuario';
-                return Text(
-                  'Hola, $userName',
-                  style: Theme.of(context).textTheme.displayMedium,
-                );
-              },
+            // Saludo con nombre cacheado
+            Text(
+              'Hola, $_userName',
+              style: Theme.of(context).textTheme.displayMedium,
             ),
 
             const SizedBox(height: 8),
