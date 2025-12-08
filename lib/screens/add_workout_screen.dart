@@ -435,6 +435,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                   color: AppTheme.primaryColor(context),
                                 ),
                                 onPressed: () {
+                                  FocusScope.of(context).unfocus();
                                   int currentValue =
                                       int.tryParse(_repsController.text) ?? 1;
                                   if (currentValue > 1) {
@@ -483,6 +484,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                   color: AppTheme.primaryColor(context),
                                 ),
                                 onPressed: () {
+                                  FocusScope.of(context).unfocus();
                                   int currentValue =
                                       int.tryParse(_repsController.text) ?? 1;
                                   setState(() {
@@ -516,6 +518,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                   color: AppTheme.primaryColor(context),
                                 ),
                                 onPressed: () {
+                                  FocusScope.of(context).unfocus();
                                   int currentValue =
                                       int.tryParse(_setsController.text) ?? 1;
                                   if (currentValue > 1) {
@@ -563,6 +566,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                                   color: AppTheme.primaryColor(context),
                                 ),
                                 onPressed: () {
+                                  FocusScope.of(context).unfocus();
                                   int currentValue =
                                       int.tryParse(_setsController.text) ?? 1;
                                   setState(() {

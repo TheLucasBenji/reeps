@@ -34,9 +34,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     final today = DateTime(now.year, now.month, now.day);
 
     if (period == 'Semana') {
-      // Últimos 7 días (incluyendo hoy)
-      final start = today.subtract(const Duration(days: 6));
-      return allRecords.where((r) => r.date.isAfter(start.subtract(const Duration(seconds: 1)))).toList();
+      // Semana actual (Lunes a Domingo)
+      final start = today.subtract(Duration(days: today.weekday - 1));
+      // Queremos todo desde el lunes
+      return allRecords.where((r) => r.date.isAfter(start.subtract(const Duration(microseconds: 1)))).toList();
     } else if (period == 'Mes') {
       // Mes actual (1 al último día)
       final start = DateTime(today.year, today.month, 1);
@@ -56,16 +57,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     Map<int, double> volumeMap = {}; // index -> volume
 
     if (period == 'Semana') {
-      // X = 0 (hace 6 días) ... 6 (hoy)
+      // X = 0 (Lunes) ... 6 (Domingo)
       for (int i = 0; i < 7; i++) {
         volumeMap[i] = 0;
       }
-      final start = today.subtract(const Duration(days: 6));
+      // Inicio de la semana (Lunes)
+      final start = today.subtract(Duration(days: today.weekday - 1));
 
       for (var r in records) {
+        // Normalizar fecha del registro a medianoche
+        final rDate = DateTime(r.date.year, r.date.month, r.date.day);
+        
         // Calcular diferencia en días desde el inicio del periodo
-        final dayDiff = r.date.difference(start).inDays;
-         // Asegurar que esté en rango 0-6 (puede variar por horas)
+        final dayDiff = rDate.difference(start).inDays;
+         // Asegurar que esté en rango 0-6
         if (dayDiff >= 0 && dayDiff <= 6) {
              volumeMap[dayDiff] = (volumeMap[dayDiff] ?? 0) + r.totalWeight;
         }
@@ -119,9 +124,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
      DateTime endPrevious;
 
      if (period == 'Semana') {
-       startCurrent = today.subtract(const Duration(days: 6));
+       startCurrent = today.subtract(Duration(days: today.weekday - 1));
        startPrevious = startCurrent.subtract(const Duration(days: 7));
-       endPrevious = startCurrent.subtract(const Duration(seconds: 1));
+       endPrevious = startCurrent.subtract(const Duration(microseconds: 1));
      } else if (period == 'Mes') {
        // Comparar este mes vs mes pasado
        startCurrent = DateTime(now.year, now.month, 1);
@@ -278,7 +283,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _selectedPeriod == 'Semana' ? 'Últimos 7 días' 
+                          _selectedPeriod == 'Semana' ? 'Esta semana' 
                           : _selectedPeriod == 'Mes' ? DateFormat('MMMM', 'es_ES').format(DateTime.now()).capitalize() : 'Este año',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
@@ -320,13 +325,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                     getTitlesWidget: (value, meta) {
                                       // Etiquetas eje X
                                       if (_selectedPeriod == 'Semana') {
-                                        // 0..6 -> Hace 6 días .. Hoy
-                                        final date = DateTime.now().subtract(Duration(days: 6 - value.toInt()));
-                                        // Formato dia, e.g. "Lu"
+                                        // 0..6 -> Lun .. Dom
+                                        const days = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
                                         return Padding(
                                           padding: const EdgeInsets.only(top: 8),
                                           child: Text(
-                                            DateFormat('E', 'es_ES').format(date).substring(0,2).capitalize(),
+                                            value.toInt() >= 0 && value.toInt() < 7 ? days[value.toInt()] : '',
                                             style: Theme.of(context).textTheme.bodySmall, 
                                           ),
                                         );

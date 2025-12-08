@@ -26,6 +26,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Estructura para almacenar estadísticas
   Map<String, dynamic> _calculateStats(List<WorkoutRecord> records) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    // Últimos 7 días: [today-6, ..., today]
+    final startDate = today.subtract(const Duration(days: 6));
+    final endDate = today
+        .add(const Duration(days: 1))
+        .subtract(const Duration(microseconds: 1));
+
+    // Período anterior (7 días antes del start date)
+    final startOfPriorPeriod = startDate.subtract(const Duration(days: 7));
+    final endOfPriorPeriod =
+        startDate.subtract(const Duration(microseconds: 1));
+
+    // Generar etiquetas para el eje X
+    final weekDays = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+    List<String> axisLabels = [];
+    for (int i = 0; i < 7; i++) {
+      final date = startDate.add(Duration(days: i));
+      axisLabels.add(weekDays[date.weekday - 1]);
+    }
+
     if (records.isEmpty) {
       return {
         'currentWeekVolume': 0.0,
@@ -35,43 +56,41 @@ class _HomeScreenState extends State<HomeScreen> {
         'weeklySets': 0,
         'chartSpots': const <FlSpot>[],
         'maxY': 10.0,
+        'axisLabels': axisLabels,
       };
     }
-
-    final now = DateTime.now();
-    // Encontrar el inicio de la semana (Lunes)
-    // weekday: 1 (Lunes) ... 7 (Domingo)
-    final startOfWeek = DateTime(now.year, now.month, now.day)
-        .subtract(Duration(days: now.weekday - 1));
-    final endOfWeek =
-        startOfWeek.add(const Duration(days: 7)).subtract(
-          const Duration(microseconds: 1),
-        );
-    final startOfLastWeek = startOfWeek.subtract(const Duration(days: 7));
-    final endOfLastWeek = startOfWeek.subtract(const Duration(microseconds: 1));
 
     double currentWeekVolume = 0;
     double previousWeekVolume = 0;
     int weeklyExercises = 0;
     int weeklySets = 0;
 
-    // Array para acumular volumen por día de la semana (0 = Lunes, 6 = Domingo)
+    // Array para acumular volumen por día (0 = día 1 de los 7, 6 = hoy)
     final List<double> dailyVolume = List.filled(7, 0.0);
 
     for (var record in records) {
-      // Filtrar por fecha
-      if (record.date.isAfter(startOfWeek) && record.date.isBefore(endOfWeek)) {
+      final recordDate = DateTime(
+        record.date.year,
+        record.date.month,
+        record.date.day,
+      );
+
+      // Filtrar por fecha (período actual)
+      if (record.date.isAfter(
+            startDate.subtract(const Duration(microseconds: 1)),
+          ) &&
+          record.date.isBefore(endDate)) {
         currentWeekVolume += record.totalWeight;
         weeklyExercises++;
         weeklySets += record.sets;
 
-        // Mapear día de la semana a índice 0-6
-        final dayIndex = record.date.weekday - 1;
+        // Calcular índice basado en diferencia de días desde startDate
+        final dayIndex = recordDate.difference(startDate).inDays;
         if (dayIndex >= 0 && dayIndex < 7) {
           dailyVolume[dayIndex] += record.totalWeight;
         }
-      } else if (record.date.isAfter(startOfLastWeek) &&
-          record.date.isBefore(endOfLastWeek)) {
+      } else if (record.date.isAfter(startOfPriorPeriod) &&
+          record.date.isBefore(endOfPriorPeriod)) {
         previousWeekVolume += record.totalWeight;
       }
     }
@@ -82,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
       percentChange =
           ((currentWeekVolume - previousWeekVolume) / previousWeekVolume) * 100;
     } else if (currentWeekVolume > 0) {
-      percentChange = 100.0; // Incremento total si antes era 0
+      percentChange = 100.0;
     }
 
     // Generar spots para el gráfico
@@ -103,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'weeklySets': weeklySets,
       'chartSpots': spots,
       'maxY': maxY,
+      'axisLabels': axisLabels,
     };
   }
 
@@ -174,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final weeklySets = stats['weeklySets'] as int;
                 final chartSpots = stats['chartSpots'] as List<FlSpot>;
                 final maxY = stats['maxY'] as double;
+                final axisLabels = stats['axisLabels'] as List<String>;
 
                 final isPositive = percentChange >= 0;
                 final percentColor =
@@ -187,13 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                      Text(
-                      'Esta semana has completado $weeklyExercises ejercicios.\n¡Sigue así!',
+                      'En los últimos 7 días has completado $weeklyExercises ejercicios.\n¡Sigue así!',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 32),
                     
                     Text(
-                      'Progreso Semanal',
+                      'Últimos 7 días',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 16),
@@ -209,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${currentVolume.toInt()} kg movidos esta\nsemana!',
+                                    '${currentVolume.toInt()} kg movidos en\n7 días!',
                                     style:
                                         Theme.of(context).textTheme.displaySmall,
                                   ),
@@ -237,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Esta semana',
+                              'Volumen',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 24),
@@ -262,23 +283,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         reservedSize: 30,
                                         interval: 1,
                                         getTitlesWidget: (value, meta) {
-                                          const days = [
-                                            'Lu',
-                                            'Ma',
-                                            'Mi',
-                                            'Ju',
-                                            'Vi',
-                                            'Sa',
-                                            'Do',
-                                          ];
                                           if (value.toInt() >= 0 &&
-                                              value.toInt() < days.length) {
+                                              value.toInt() <
+                                                  axisLabels.length) {
                                             return Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 8,
                                               ),
                                               child: Text(
-                                                days[value.toInt()],
+                                                axisLabels[value.toInt()],
                                                 style: Theme.of(
                                                   context,
                                                 ).textTheme.bodyMedium,
