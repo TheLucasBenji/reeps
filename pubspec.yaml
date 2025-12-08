@@ -65,6 +65,13 @@ dependencies:
   file_picker: ^10.3.7
   material_design_icons_flutter: ^7.0.7296
 
+  # Cloudinary para fotos de perfil
+  cloudinary_url_gen: ^1.6.0
+  http: ^1.2.0
+
+  # Image Picker
+  image_picker: ^1.1.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

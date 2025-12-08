@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../config/theme.dart';
 import '../widgets/custom_button.dart';
 import '../services/firestore_service.dart';
 import '../services/auth_service.dart';
+import '../services/cloudinary_service.dart';
 import '../models/user_profile.dart';
 import 'package:provider/provider.dart';
 
@@ -17,13 +20,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _avatarController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
   DateTime? _birthDate;
   String? _gender;
   bool _isLoading = true;
+  
+  // Imagen de perfil
+  File? _selectedImage;
+  String? _currentAvatarUrl;
 
   @override
   void initState() {
@@ -40,7 +46,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (profile != null) {
           _nameController.text = profile.name ?? '';
           _emailController.text = profile.email ?? user.email ?? '';
-          _avatarController.text = profile.avatar ?? '';
+          _currentAvatarUrl = profile.avatar;
           _heightController.text = profile.height ?? '';
           _weightController.text = profile.weight ?? '';
           if (profile.birthDate != null) {
@@ -64,10 +70,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _avatarController.dispose();
     _heightController.dispose();
     _weightController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
   }
 
   String? _validateName(String? v) {
@@ -121,10 +142,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final user = authService.currentUser;
       
       if (user != null) {
+        // Subir imagen si se seleccionó una nueva
+        String? avatarUrl = _currentAvatarUrl;
+        if (_selectedImage != null) {
+          avatarUrl = await CloudinaryService().uploadProfileImage(
+            _selectedImage!,
+            user.uid,
+          );
+        }
+
         final profile = UserProfile(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
-          avatar: _avatarController.text.trim(),
+          avatar: avatarUrl,
           height: _heightController.text.trim(),
           weight: _weightController.text.trim(),
           birthDate: _birthDate?.toIso8601String(),
@@ -160,7 +190,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ? const Center(child: CircularProgressIndicator()) 
               : Column(
             children: [
-              _AvatarPreview(controller: _avatarController),
+              _AvatarPreview(
+                imageUrl: _currentAvatarUrl,
+                localImage: _selectedImage,
+                onTap: _pickImage,
+              ),
               const SizedBox(height: 16),
               Expanded(
                 child: SingleChildScrollView(
@@ -195,20 +229,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           decoration: const InputDecoration(
                             hintText: 'tu@email.com',
                           ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        Text(
-                          'Avatar (URL)',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _avatarController,
-                          decoration: const InputDecoration(
-                            hintText: 'https://.../avatar.png',
-                          ),
-                          onChanged: (_) => setState(() {}),
                         ),
                         const SizedBox(height: 12),
 
@@ -310,36 +330,66 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 }
 
 class _AvatarPreview extends StatelessWidget {
-  final TextEditingController controller;
+  final String? imageUrl;
+  final File? localImage;
+  final VoidCallback onTap;
 
-  const _AvatarPreview({required this.controller});
+  const _AvatarPreview({
+    required this.imageUrl,
+    required this.localImage,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final url = controller.text.trim();
-    final hasUrl = url.isNotEmpty && Uri.tryParse(url)?.hasAbsolutePath == true;
+    final hasImage = localImage != null || 
+        (imageUrl != null && imageUrl!.isNotEmpty);
 
     return Column(
       children: [
-        CircleAvatar(
-          radius: 44,
-          backgroundColor: AppTheme.surfaceColor(context),
-          backgroundImage: hasUrl ? NetworkImage(url) : null,
-          child: !hasUrl
-              ? Icon(
-                  Icons.person,
-                  size: 44,
-                  color: AppTheme.textSecondaryColor(context),
-                )
-              : null,
+        GestureDetector(
+          onTap: onTap,
+          child: Stack(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: AppTheme.surfaceColor(context),
+                backgroundImage: localImage != null
+                    ? FileImage(localImage!)
+                    : (imageUrl != null && imageUrl!.isNotEmpty
+                        ? NetworkImage(imageUrl!)
+                        : null) as ImageProvider?,
+                child: !hasImage
+                    ? Icon(
+                        Icons.person,
+                        size: 50,
+                        color: AppTheme.textSecondaryColor(context),
+                      )
+                    : null,
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor(context),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         TextButton(
-          onPressed: () {
-            // focus the avatar field by navigating up the tree
-            // actual focusing handled by the Editable field when tapped
-          },
-          child: const Text('Cambiar avatar'),
+          onPressed: onTap,
+          child: Text(localImage != null ? 'Cambiar foto' : 'Agregar foto'),
         ),
       ],
     );
