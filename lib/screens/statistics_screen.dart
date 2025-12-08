@@ -451,11 +451,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       // Formato de fecha
                       final dateStr = DateFormat("d MMM, H:mm", 'es_ES').format(record.date);
                       
+                      final totalVolume = record.weight * record.reps * record.sets;
                       return _buildExerciseRecord(
                         context, 
                         icon: IconUtils.getIconForExercise(record.exerciseName),
                         name: record.exerciseName,
                         details: '${FormatUtils.formatWeight(record.weight, decimals: 0)} × ${record.reps} reps × ${record.sets} sets',
+                        volume: FormatUtils.formatWeight(totalVolume),
                         date: dateStr,
                       );
                     },
@@ -473,6 +475,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     required IconData icon,
     required String name,
     required String details,
+    required String volume,
     required String date,
   }) {
     return Container(
@@ -517,7 +520,19 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(details, style: Theme.of(context).textTheme.bodyMedium),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(details, style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      volume,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.primaryColor(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

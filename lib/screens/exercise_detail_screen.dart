@@ -200,12 +200,14 @@ class ExerciseDetailScreen extends StatelessWidget {
                       final isPR = record.weight == maxWeight && maxWeight > 0;
                       final dateStr = DateFormat("d 'de' MMMM 'de' y", 'es_ES').format(record.date);
 
+                      final totalVolume = record.weight * record.reps * record.sets;
                       return _buildRecordCard(
                         context,
                         date: dateStr,
                         weight: FormatUtils.formatWeight(record.weight, decimals: record.weight.truncateToDouble() == record.weight ? 0 : 1),
                         reps: '${record.reps} reps',
                         sets: '${record.sets} sets',
+                        volume: FormatUtils.formatWeight(totalVolume),
                         isPR: isPR,
                       );
                     },
@@ -240,6 +242,7 @@ class ExerciseDetailScreen extends StatelessWidget {
     required String weight,
     required String reps,
     required String sets,
+    required String volume,
     bool isPR = false,
   }) {
     return Container(
@@ -257,9 +260,21 @@ class ExerciseDetailScreen extends StatelessWidget {
               children: [
                 Text(date, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
-                Text(
-                  '$weight x $reps x $sets',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$weight x $reps x $sets',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Text(
+                      volume,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.primaryColor(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
