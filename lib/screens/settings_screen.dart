@@ -128,9 +128,7 @@ class SettingsScreen extends StatelessWidget {
                    'workouts': workouts.map((w) {
                      final map = w.toMap();
                      // Convertir fecha a string
-                     if (w.date != null) {
-                        map['date'] = w.date.toIso8601String();
-                     }
+                     map['date'] = w.date.toIso8601String();
                      return map;
                    }).toList(),
                    'exportedAt': DateTime.now().toIso8601String(),

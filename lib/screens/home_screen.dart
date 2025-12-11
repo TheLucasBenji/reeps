@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/theme.dart';
-import '../models/user_profile.dart';
 import '../models/workout_record.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
