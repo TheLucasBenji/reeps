@@ -17,7 +17,7 @@ class IconUtils {
       case 'Tríceps': // Triceps
         return MdiIcons.armFlexOutline;
       case 'Abdominales': // Abs
-        return MdiIcons.stomach; // If stomach doesn't exist, we might need a fallback, but MdiIcons usually has it. Let's use generic if unsure.
+        return MdiIcons.stomach; 
       case 'Cardio': // Cardio
         return MdiIcons.heartPulse;
       case 'Piernas': // Legs

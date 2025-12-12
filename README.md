@@ -98,13 +98,23 @@ Una vez que la app esté ejecutándose, sigue estos pasos para comenzar a regist
 
 7. **Configuración**: Puedes cambiar datos de tu perfil, cambiar el tema de la app y cerrar sesión.
 
-### Estructura relevante del proyecto
+### Estructura del Proyecto
 
-- `lib/` – Código fuente principal.
-- `lib/screens/` – Pantallas como `home_screen.dart`, `add_workout_screen.dart`, etc.
-- `lib/models/` – Modelos de datos (`exercise.dart`, `workout_record.dart`).
-- `lib/config/theme.dart` – Tema centralizado de la app.
-- `assets/` – Imágenes y recursos.
+```text
+reeps/
+├── assets/  #logo .svg .png
+├── lib/
+│   ├── config/  #tema
+│   ├── models/  #modelos de datos
+│   ├── screens/  #vistas
+│   ├── services/  #servicios
+│   ├── utils/  #funciones varias
+│   ├── widgets/  #componentes
+│   ├── firebase_options.dart
+│   └── main.dart
+├── pubspec.yaml
+```
+
 
 ### Dependencias Clave
 
